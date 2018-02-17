@@ -1,9 +1,9 @@
 <template>
-    <div>
-        <div v-if="login">
+    <div class="fullheight">
+        <div v-if="login" class="fullheight">
             <login></login>
         </div>
-        <div v-if="agreement">
+        <div v-else-if="agreement">
             <game></game>
             <!--<agreement v-on:agree="agree"></agreement>-->
         </div>
