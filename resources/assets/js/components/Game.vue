@@ -102,7 +102,6 @@
         }
     }
 
-
     //map codes to array index
     //b2 to map[1][1]
     let mapping = (code) => {
@@ -150,14 +149,12 @@
 
         if(res === true) {
             return [GAME_WIN, winClass];
-        } else if(inProgress) {
-            return [GAME_IN_PROGRESS, winClass];
         } else {
-            return [GAME_FAIL, winClass];
+            return [GAME_IN_PROGRESS, winClass];
         }
     };
 
-    let checkLanes = (symb) => {
+    let checkLines = (symb) => {
         let cols = 0, rows = 0, res = false;
         let inProgress= false, isInProgressRight = false, isInProgressLeft = false;
         let winClass = '';
@@ -181,11 +178,7 @@
             if (isInProgressRight || isInProgressLeft) inProgress = true;
         }
 
-        if(inProgress) {
-            return [GAME_IN_PROGRESS, winClass];
-        } else {
-            return [GAME_FAIL, winClass];
-        }
+        return [GAME_IN_PROGRESS, winClass];
     };
 
     let isGameEnded = () => {
@@ -200,20 +193,20 @@
     }
 
     let checkWin = (sym) => {
-        let resLines = checkLanes(sym);
+        let resLines = checkLines(sym);
         let resDiags = checkDiagonal(sym);
         
         if(resLines[0] == GAME_WIN) {
-            console.log(resLines[1]);
-            return GAME_WIN;
+            return resLines;
         } else if(resDiags[0] == GAME_WIN) {
-            console.log(resDiags[1]);
-            return GAME_WIN;
-        } else if(checkLanes(sym)[0] == GAME_IN_PROGRESS || checkDiagonal(sym)[0] == GAME_IN_PROGRESS) {
-            return GAME_IN_PROGRESS;
+            return resDiags;
+        } else if(resLines[0] == GAME_IN_PROGRESS || resDiags[0] == GAME_IN_PROGRESS) {
+            return [GAME_IN_PROGRESS, ''];
         } else if (isGameEnded()) {
-            return GAME_DRAW;
+            return [GAME_DRAW, ''];
         }
+        console.log(resLines);
+        console.log(resDiags);
     };
 
     export default {
@@ -237,9 +230,10 @@
                 } else {
                     Vue.set(map[i], j, 1);
                     let res = checkWin(1);
-                    if(res == GAME_WIN) {
+                    if(res[0] == GAME_WIN) {
+//                        console.log(res[1]);
                         alert('!!!Вы выйграли!!!');
-                    } else if(res == GAME_DRAW) {
+                    } else if(res[0] == GAME_DRAW) {
                         alert('Ничья!');
                     }
                 }
@@ -248,8 +242,10 @@
                 var timer = setInterval(function() {
                     Vue.set(map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), Math.floor(Math.random() * 3));
                     let res = checkWin(1);
-                    if(res == GAME_WIN) clearInterval(timer);
-                    console.log('Результат: ' + (res));
+                    console.log(res);
+                    if(res == undefined) clearInterval(timer);
+                    if(res[0] == GAME_WIN) clearInterval(timer);
+                    console.log('Результат: ' + (res[0]));
                 }, 100);
 
             }
