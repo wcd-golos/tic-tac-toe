@@ -50,6 +50,54 @@ function Game( id, author ) {
     ];
 }
 
+function createTransfer(from, active_wif, to, agent, gbg_amount, golos_amount, fee, sendDeadline, sendEscrowExpiration, terms) 
+{
+    console.log('create transfer');
+
+    //генерация id транзакции
+    var escrow_id = parseInt(Math.random() * (99999999 - 10000000) + 10000000); // ID транзакции
+    console.log('escrow_id: ', escrow_id);
+
+    golosJs.api.getDynamicGlobalProperties(function(err, response) {
+        // Added 'Z' reciver get correct UTC time in all browsers
+        var ratification_deadline = new Date(response.time+'Z');
+        ratification_deadline.setMinutes(ratification_deadline.getMinutes() + parseInt(sendDeadline) * 60 - 1);
+
+        var escrow_expiration = new Date(response.time+'Z');
+        escrow_expiration.setHours(escrow_expiration.getHours() + parseInt(sendEscrowExpiration));
+        
+        console.log('getDynamicGlobalProperties: ', response);
+
+        var objTerms = {
+            terms: terms
+        };
+
+        golosJs.broadcast.escrowTransfer(
+            active_wif, // sender active key
+            from, // sender name
+            to, // reciver name
+            agent, // agent name
+            escrow_id, // int, ID создоваемой транзакции,
+            gbg_amount, // "0.100 GBG", колличество переводимых золотых голосов
+            golos_amount, // "0.100 GOLOS", колличество переводимых голосов
+            fee, // "0.001 GOLOS", доход гаранту/агенту в GOLOS или GBG
+            ratification_deadline, // hours, период, в течение которого получатель и гарант должны согласится с условиями сделки. Если хоть один не успеет сделать этого, средства будут автоматически возвращены отправителю
+            escrow_expiration, // hours, срок, после которого любая из сторон сможет выполнить любые действия (либо забрать средства себе, либо отправить их другой стороне). Этот период не может быть меньше, чем предыдущий
+            JSON.stringify(terms),
+            function(err, response) {
+                if(!err && response.ref_block_num) {
+                    console.log('create transaction: ', response);
+                    
+                    //TODO: сохранить имя отправителя, получателя и код транзакции escrow_id
+                } else {
+                    console.log('create transaction error: ', err);
+                }
+            }
+        );
+    });
+}
+
+
 Game.PARENT_PERMLINK = 'cross-zero-game';
 
 Game.STATUS_NEW = 0;
@@ -221,5 +269,11 @@ Game.prototype.join = function( username, cb ) {
 Game.generateId = function () {
     return guid();
 };
+
+
+Game.createTransfers = function () {
+    
+}
+
 
 window.Game = Game;
