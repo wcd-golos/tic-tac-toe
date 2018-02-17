@@ -1,10 +1,9 @@
 <template>
     <div class="fullheight">
         <div v-if="login" class="fullheight">
-            <login v-on:success="logined"></login>
+            <login v-on:success="logged"></login>
         </div>
         <div v-else-if="agreement" class="fullheight">
-            <!--<game></game>-->
             <agreement v-on:agree="agree"></agreement>
         </div>
         <div v-else-if="game" class="fullheight">
@@ -35,23 +34,26 @@
     }
 
     export default {
-        //props: ['username', 'wif'],
         created: function() {
             let permStorage = localStorage['permissions'];
             if (permStorage != undefined) {
                 let permissions = JSON.parse(permStorage);
                 this.login = false;
-                this.agreement = true;                
+                this.agreement = true;
+                this.$store.commit('permissions', permissions);
+                //console.log('user', this.$store.state.user)            
                 // Game.play(permissions.posting, permissions.user, function(err, game) {
                 //     if (err) {
                 //         console.log(err);
                 //         return;
                 //     }
+                this.user = {
+                    login: permissions.user,
+                    key: permissions.posting
+                };
 
-                //     this.agreement = false;
-                //     this.game = true;
-                //     this.gameWrapper = game;
-                // });
+                this.login = false;
+                this.agreement = true;
             }
 
             getCurrentState((state, game) => {
@@ -65,7 +67,8 @@
             return {
                 login: true,
                 agreement: false,
-                game: false
+                game: false,
+                user: null
             }
         },
 
@@ -75,19 +78,19 @@
             },
 
             agree: function(id) {
-                Game.play(this.wif, this.username, function(err, game) {
+                Game.play(this.user, (err, game) => {
                     if (err) {
                         console.log(err);
                         return;
                     }
 
-                    this.login = false;
-                    this.agreement = false;
-                    this.game = true;
-                    this.gameWrapper = game;
+                //     this.login = false;
+                //     this.agreement = false;
+                //     this.game = true;
+                //     this.gameWrapper = game;
                 });
             },
-            logined: function(id) {
+            logged: function(id) {
                 this.login = false;
                 this.agreement = true;
             }
