@@ -103,6 +103,7 @@ Game.getGame = function( author, gameId, cb ) {
         }
 
         var game = new Game(gameId, author);
+        game.state = Game.STATUS_NEW;
 
         golosJs.api.getContentReplies(author, gameId, function(err, result) {
             console.log('getContentReplies');
@@ -111,7 +112,10 @@ Game.getGame = function( author, gameId, cb ) {
                 return cb(err);
             }
 
-            console.log('comments', result.length);
+            if (result.length) {
+                game.state = Game.STATUS_PLAYING;
+            }
+
             result.forEach(comment => {
                 try {
                     var meta = JSON.parse(comment.jsonMetadata);
@@ -124,6 +128,8 @@ Game.getGame = function( author, gameId, cb ) {
 
                     } else if (meta.indexOf('WIN')) {
 
+                    } else if (meta.indexOf('DONE')) {
+                        game.state = Game.STATUS_DONE;
                     }
 
                 } catch (e) {
@@ -137,9 +143,11 @@ Game.getGame = function( author, gameId, cb ) {
 };
 
 Game.createGame = function ( user, cb ) {
+    console.log('createGame');
+
     var title = `Игра создана ${ user.login }`;
 
-    comment(user.login, '', user.key, Game.PARENT_PERMLINK, title, ['test'], function(err, result, gameId) {
+    comment(user, '',  Game.PARENT_PERMLINK, title, ['test'], function(err, result, gameId) {
         console.log('CREATE post/comment', err, result);
 
         if (err) {
