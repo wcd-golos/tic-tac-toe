@@ -1,0 +1,25 @@
+
+// Fonts
+//@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+@import url('https://fonts.googleapis.com/css?family=Jura');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,700&subset=cyrillic');
+
+// Variables
+@import "variables";
+
+// Bootstrap
+@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+
+html, body {
+	background-color: #fff;
+	color: #636b6f;
+	//font-family: 'Amatic SC', cursive;
+	//font-family: 'Raleway', sans-serif;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 100;
+	min-height: 100vh;
+	margin: 0;
+}
+
+//Pages
+@import "home";
