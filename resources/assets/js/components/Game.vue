@@ -125,12 +125,10 @@
         return [first, second];
     };
 
-    // 0 - ничья
-    // 1 - выйграл
-    // 2 - игра в процессе
     let checkDiagonal = (symb) => {
         let toright, toleft, res = false;
         let inProgress= false, isInProgressRight = false, isInProgressLeft = false;
+        let winClass = '';
         toright = true;
         toleft = true;
         for (let i=0; i < count; i++) {
@@ -141,6 +139,8 @@
             isInProgressLeft = (map[count - i - 1][i] == 0);
         }
 
+        if (toright) winClass = 'win-00-22';
+        if (toleft) winClass = 'win-20-02';
         if (toright || toleft) res = true;
 
         //если нет выйграша то проверка на незаконченную игру
@@ -149,17 +149,18 @@
         }
 
         if(res === true) {
-            return GAME_WIN;
+            return [GAME_WIN, winClass];
         } else if(inProgress) {
-            return GAME_IN_PROGRESS;
+            return [GAME_IN_PROGRESS, winClass];
         } else {
-            return GAME_FAIL;
+            return [GAME_FAIL, winClass];
         }
     };
 
     let checkLanes = (symb) => {
         let cols = 0, rows = 0, res = false;
         let inProgress= false, isInProgressRight = false, isInProgressLeft = false;
+        let winClass = '';
         for (let col=0; col < count; col++) {
             cols = true;
             rows = true;
@@ -171,7 +172,9 @@
                 isInProgressLeft = (map[row][col] == 0);
             }
 
-            if (cols || rows) return GAME_WIN;
+            if (cols) winClass = 'win-'+col+'0-'+col+'2';
+            if (rows) winClass = 'win-0'+col+'-2'+col;
+            if (cols || rows) return [GAME_WIN, winClass];
         }
         //если нет выйграша то проверка на незаконченную игру
         if(!res) {
@@ -179,9 +182,9 @@
         }
 
         if(inProgress) {
-            return GAME_IN_PROGRESS;
+            return [GAME_IN_PROGRESS, winClass];
         } else {
-            return GAME_FAIL;
+            return [GAME_FAIL, winClass];
         }
     };
 
@@ -197,9 +200,16 @@
     }
 
     let checkWin = (sym) => {
-        if(checkLanes(sym) == GAME_WIN || checkDiagonal(sym) == GAME_WIN) {
+        let resLines = checkLanes(sym);
+        let resDiags = checkDiagonal(sym);
+        
+        if(resLines[0] == GAME_WIN) {
+            console.log(resLines[1]);
             return GAME_WIN;
-        } else if(checkLanes(sym) == GAME_IN_PROGRESS || checkDiagonal(sym) == GAME_IN_PROGRESS) {
+        } else if(resDiags[0] == GAME_WIN) {
+            console.log(resDiags[1]);
+            return GAME_WIN;
+        } else if(checkLanes(sym)[0] == GAME_IN_PROGRESS || checkDiagonal(sym)[0] == GAME_IN_PROGRESS) {
             return GAME_IN_PROGRESS;
         } else if (isGameEnded()) {
             return GAME_DRAW;
