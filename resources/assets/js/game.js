@@ -38,6 +38,8 @@ Game.prototype.move = function( x, y ) {
 };
 
 Game.getCurrentGame = function() {
+    console.log('getCurrentGame');
+
     var defaultResult = { id: 0, author: null };
 
     try {
@@ -52,6 +54,8 @@ Game.getCurrentGame = function() {
 };
 
 Game.getGame = function( author, gameId, cb ) {
+    console.log('getGame');
+
     golosJs.api.getContent(author, gameId, function(err, result) {
         if (err) {
             return cb(err);
@@ -64,9 +68,15 @@ Game.getGame = function( author, gameId, cb ) {
         var game = new Game(gameId, author);
 
         golosJs.api.getContentReplies(author, gameId, function(err, result) {
+            console.log('getContentReplies');
+
             if (err) {
                 return cb(err);
             }
+
+            result.forEach(comment => {
+                console.log(comment);
+            });
 
             return cb(null, game);
         });
@@ -90,7 +100,7 @@ Game.createGame = function ( wif, author, cb ) {
                 return cb(err);
             }
 
-            golosJs.broadcast.comment(wif, '', Game.PARENT_PERMLINK, author, gameId, title, body, jsonMetadata, function(err, result) {
+            golosJs.broadcast.comment(wif, '', Game.PARENT_PERMLINK + ' test', author, gameId, title, body, jsonMetadata, function(err, result) {
                 if (err) {
                     return cb(err);
                 }
@@ -104,6 +114,8 @@ Game.createGame = function ( wif, author, cb ) {
 };
 
 Game.getLastGame = function (cb) {
+    console.log('getLastGame');
+
     let query = {
         select_tags: [Game.PARENT_PERMLINK],
         limit: 1,
@@ -115,28 +127,52 @@ Game.getLastGame = function (cb) {
             return cb(err);
         }
 
-        return cb(null, new Game());
+        if (!result.length) {
+            return cb(null, null);
+        }
+
+        console.log(result);
+
+        result = result[0];
+        var game = new Game(result.permlink, result.author);
+
+        return cb(null, game);
     });
 };
 
 Game.play = function(wif, username, cb) {
+    console.log('play');
+
     Game.getLastGame((err, game) => {
+
         if (err) {
             return cb(err);
         }
 
-        if (game == null || game.state != Game.STATUS_NEW) {
+        if (game == null) {
             return Game.createGame(wif, username, cb);
         }
 
-        game.join(username, function(err) {
-            cb(err, game);
+        Game.getGame(game.author, game.id, (err, game) => {
+            if (err) {
+                return cb(err);
+            }
+
+            if (game.state != Game.STATUS_NEW) {
+                return Game.createGame(wif, username, cb);
+            }
+
+            console.log(game);
+
+            game.join(username, function(err) {
+                cb(err, game);
+            });
         });
     });
 };
 
 Game.prototype.join = function( username, cb ) {
-
+    console.log('join');
 };
 
 Game.generateId = function () {
