@@ -82,7 +82,7 @@ body {
     .input-group-item {
         width: 470px;
 
-        input[type=text] {
+        input[type=text], input[type=password] {
             display: block;
             width: 100%;
             border: none;
