@@ -19,10 +19,6 @@
     var STATUS_PLAYING = 1;
     var STATUS_DONE = 2;
 
-    var getActiveGame  = function () {
-        return localStorage.currentGame || 0;
-    };
-
     var getCurrentState = function (cb) {
         var activeGame = Game.getCurrentGame();
         if (!activeGame.id) {

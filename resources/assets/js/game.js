@@ -18,6 +18,12 @@ function Game( id, author ) {
     this.opponent = null;
     this.isMy = true;
     this.state = Game.STATUS_NEW;
+
+    this.matrix = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+    ];
 }
 
 Game.PARENT_PERMLINK = 'cross-zero-game';
@@ -76,6 +82,7 @@ Game.getGame = function( author, gameId, cb ) {
                 return cb(err);
             }
 
+            console.log('comments', result.length);
             result.forEach(comment => {
                 try {
                     var meta = JSON.parse(comment.jsonMetadata);
@@ -113,21 +120,18 @@ Game.createGame = function ( wif, author, cb ) {
             tags: [Game.PARENT_PERMLINK, 'test']
         };
 
-        golosJs.api.login('', '', function(err, result) {
+        if (err || !result) {
+            return cb(err);
+        }
 
-            if (err || !result) {
+        golosJs.broadcast.comment(wif, '', Game.PARENT_PERMLINK, author, gameId, title, body, JSON.stringify(jsonMetadata), function(err, result) {
+            if (err) {
                 return cb(err);
             }
 
-            golosJs.broadcast.comment(wif, '', Game.PARENT_PERMLINK, author, gameId, title, body, JSON.stringify(jsonMetadata), function(err, result) {
-                if (err) {
-                    return cb(err);
-                }
+            var game = new Game(gameId, author);
 
-                var game = new Game(gameId, author);
-
-                cb(null, game);
-            });
+            cb(null, game);
         });
     });
 };
@@ -192,6 +196,8 @@ Game.play = function(wif, username, cb) {
 
 Game.prototype.join = function( username, cb ) {
     console.log('join');
+
+
 };
 
 Game.generateId = function () {
