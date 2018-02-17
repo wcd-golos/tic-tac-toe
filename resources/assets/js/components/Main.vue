@@ -70,10 +70,6 @@
         props: ['username', 'wif'],
 
         created: function() {
-            Game.createGame(this.wif, this.username, (err, game) => {
-                console.log(err, game);
-            });
-
             getCurrentState((state, game) => {
                 this.agreement = state != STATUS_PLAYING;
                 this.game = state == STATUS_PLAYING;

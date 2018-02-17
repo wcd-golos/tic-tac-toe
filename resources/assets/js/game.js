@@ -15,6 +15,8 @@ function Game( id, author ) {
     this.author = author;
 
     this.moves = [];
+    this.opponent = null;
+    this.isMy = true;
     this.state = Game.STATUS_NEW;
 }
 
@@ -75,7 +77,22 @@ Game.getGame = function( author, gameId, cb ) {
             }
 
             result.forEach(comment => {
-                console.log(comment);
+                try {
+                    var meta = JSON.parse(comment.jsonMetadata);
+                    var tags = meta.tags || [];
+                    var body = comment.body;
+
+                    if (meta.indexOf('OPPONENT')) {
+                        game.opponent = body;
+                    } else if (meta.indexOf('MOVE')) {
+
+                    } else if (meta.indexOf('WIN')) {
+
+                    }
+
+                } catch (e) {
+
+                }
             });
 
             return cb(null, game);
@@ -92,7 +109,9 @@ Game.createGame = function ( wif, author, cb ) {
         var gameId = Game.generateId();
         var title = `Игра создана ${ author }`;
         var body = JSON.stringify({creator: author});
-        var jsonMetadata = '{}';
+        var jsonMetadata = {
+            tags: [Game.PARENT_PERMLINK, 'test']
+        };
 
         golosJs.api.login('', '', function(err, result) {
 
@@ -100,7 +119,7 @@ Game.createGame = function ( wif, author, cb ) {
                 return cb(err);
             }
 
-            golosJs.broadcast.comment(wif, '', Game.PARENT_PERMLINK + ' test', author, gameId, title, body, jsonMetadata, function(err, result) {
+            golosJs.broadcast.comment(wif, '', Game.PARENT_PERMLINK, author, gameId, title, body, JSON.stringify(jsonMetadata), function(err, result) {
                 if (err) {
                     return cb(err);
                 }
@@ -121,7 +140,7 @@ Game.getLastGame = function (cb) {
         limit: 1,
     }
 
-    golosJs.api.getDiscussionsByTrending(query, (err, result) => {
+    golosJs.api.getDiscussionsByCreated(query, (err, result) => {
 
         if (err) {
             return cb(err);
