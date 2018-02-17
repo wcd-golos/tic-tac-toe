@@ -202,14 +202,14 @@ Game.play = function(wif, username, cb) {
 
             console.log(game);
 
-            game.join(username, function(err) {
+            Game.join(wif, username, function(err) {
                 cb(err, game);
             });
         });
     });
 };
 
-Game.prototype.join = function( username, cb ) {
+Game.prototype.join = function(wif, username, cb ) {
     console.log('join');
 
     comment(username, this.author, wif, this.id, username, ['OPPONENT'], function(err, result, id) {

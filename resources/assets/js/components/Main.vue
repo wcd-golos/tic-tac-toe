@@ -41,7 +41,9 @@
             if (permStorage != undefined) {
                 let permissions = JSON.parse(permStorage);
                 this.login = false;
-                this.agreement = true;                
+                this.agreement = true;
+                this.$store.commit('permissions', permissions);
+                //console.log('user', this.$store.state.user)            
                 // Game.play(permissions.posting, permissions.user, function(err, game) {
                 //     if (err) {
                 //         console.log(err);
@@ -75,17 +77,17 @@
             },
 
             agree: function(id) {
-                Game.play(this.wif, this.username, function(err, game) {
-                    if (err) {
-                        console.log(err);
-                        return;
-                    }
+                // Game.play(this.wif, this.username, function(err, game) {
+                //     if (err) {
+                //         console.log(err);
+                //         return;
+                //     }
 
-                    this.login = false;
-                    this.agreement = false;
-                    this.game = true;
-                    this.gameWrapper = game;
-                });
+                //     this.login = false;
+                //     this.agreement = false;
+                //     this.game = true;
+                //     this.gameWrapper = game;
+                // });
             },
             logined: function(id) {
                 this.login = false;
