@@ -52,21 +52,21 @@
     };
 
     var getCurrentState = function (cb) {
-        var activeGame = getActiveGame();
+        var activeGame = Game.getCurrentGame();
         if (!activeGame.id) {
             return cb(STATUS_NEW);
         }
 
         Game.getGame(activeGame.author, activeGame.id, function (err, game) {
             if (err) {
-                return cb(STATUS_NEW);
+                return cb(Game.STATUS_NEW);
             }
 
-            if (game.isDone) {
-                return cb(STATUS_DONE);
+            if (game == null || game.isNew) {
+                return cb(Game.STATUS_NEW);
             }
 
-            return cb(STATUS_PLAYING, game);
+            return cb(game.state, game);
         });
     }
 

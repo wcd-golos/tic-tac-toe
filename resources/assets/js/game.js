@@ -13,20 +13,59 @@ function guid() {
 function Game( id, author ) {
     this.id = id;
     this.author = author;
+
+    this.moves = [];
+    this.state = Game.STATUS_NEW;
 }
 
 Game.PARENT_PERMLINK = 'cross-zero-game';
 
-Game.prototype.author = null;
-Game.prototype.moves = [];
-Game.prototype.isDone = false;
-Game.prototype.isNew = true;
+Game.STATUS_NEW = 0;
+Game.STATUS_PLAYING = 1;
+Game.STATUS_DONE = 2;
 
-Game.getGame = function( author, gameId ) {
+Game.prototype.persist = function () {
+    var game = {
+        id: this.id,
+        author: this.author
+    };
+
+    localStorage.currentGame = JSON.stringify(game);
+};
+
+Game.getCurrentGame = function() {
+    var defaultResult = { id: 0, author: null };
+
+    try {
+        if (!localStorage.currentGame) {
+            return defaultResult;
+        }
+
+        return JSON.parse(localStorage.currentGame);
+    } catch (e) {
+        return defaultResult;
+    }
+};
+
+Game.getGame = function( author, gameId, cb ) {
     golosJs.api.getContent(author, gameId, function(err, result) {
         if (err) {
-            return cb(STATUS_NEW);
+            return cb(err);
         }
+
+        if (!result || !result.id) {
+            return cb(null, null);
+        }
+
+        var game = new Game(gameId, author);
+
+        golosJs.api.getContentReplies(author, gameId, function(err, result) {
+            if (err) {
+                return cb(err);
+            }
+
+            return cb(null, game);
+        });
     });
 };
 
@@ -91,3 +130,5 @@ Game.play = function(cb) {
 Game.generateId = function () {
     return guid();
 };
+
+window.Game = Game;

@@ -6,10 +6,9 @@
  */
 
 require('./bootstrap');
+require('./game');
 
 window.Vue = require('vue');
-
-require('./game');
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
