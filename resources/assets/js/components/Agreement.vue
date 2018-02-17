@@ -1,17 +1,9 @@
 <template>
-    <div class="home">
-        <div class="flex-center position-ref full-height">
-            <div class="content">
-                <div class="title m-b-md">
-                    Добро пожаловать в игру!<br/>
-                    Чтобы начать игру Вам нужно перечислить 0.01 голос для начала игры
-                </div>
-                <!--<a class="start-link" v-on:click="emit" href="/games">-->
-                <a class="start-link" v-on:click="emit">
-                    Играть
-                    <div v-if="loader">Loading...</div>
-                </a>
-            </div>
+    <div class="gradient">
+        <div class="screen2">
+            <h3>Добро пожаловать! <br> Играть <b>=</b> <span>0.01 голос</span></h3>
+            <a href="javascript:void(0);" v-if="!loader" class="link-btn" v-on:click="emit">СОГЛАСЕН</a>
+            <div v-if="loader">Загрузка...</div>
         </div>
     </div>
 </template>
