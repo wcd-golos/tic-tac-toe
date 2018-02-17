@@ -18,6 +18,7 @@ window.Vue = require('vue');
 
 Vue.component('find-game', require('./components/FindGame.vue'));
 Vue.component('agreement', require('./components/Agreement.vue'));
+Vue.component('login', require('./components/Login.vue'));
 Vue.component('game', require('./components/Game.vue'));
 Vue.component('mainmain', require('./components/Main.vue'));
 
