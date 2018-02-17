@@ -1,11 +1,11 @@
 <template>
     <div class="fullheight">
         <div v-if="login" class="fullheight">
-            <login></login>
+            <login v-on:success="logined"></login>
         </div>
         <div v-else-if="agreement">
-            <game></game>
-            <!--<agreement v-on:agree="agree"></agreement>-->
+            <!--<game></game>-->
+            <agreement v-on:agree="agree"></agreement>
         </div>
         <div v-else-if="game">
             <game v-bind:game="gameWrapper"></game>
@@ -76,10 +76,15 @@
                         return;
                     }
 
+                    this.login = false;
                     this.agreement = false;
                     this.game = true;
                     this.gameWrapper = game;
                 });
+            },
+            logined: function(id) {
+                this.login = false;
+                this.agreement = true;
             }
         }
     };
