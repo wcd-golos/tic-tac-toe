@@ -17,10 +17,7 @@
 
     var golosJs = require('golos-js');
 
-    var username = 'a-borisov';
-    var privWif = '5JCQ7FGt4fWN5ggL1rqL9aFiT9Ah2c9494Ej6CQ7fNLuWXd4pF6';
-
-    var verifyUser = () => {
+    var verifyUser = (username, privWif) => {
 
         //Проверяем наличие акаунта
         //Делаем запрос на получение акаутна по введенному логину
@@ -74,6 +71,8 @@
     }
 
     export default {
+        props: ['username', 'wif'],
+
         created: function() {
             getCurrentState((state) => {
                 this.agreement = state != STATUS_PLAYING;
@@ -81,15 +80,16 @@
             });
         },
 
-        data: function() {
+        data: function () {
             return {
                 agreement: true,
                 game: false
             }
         },
+
         methods: {
             verifyUser () {
-                verifyUser();
+                verifyUser(this.username, this.wif);
             },
 
             agree: function(id) {

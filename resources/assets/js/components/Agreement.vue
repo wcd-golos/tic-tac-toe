@@ -8,7 +8,8 @@
                 </div>
                 <!--<a class="start-link" v-on:click="emit" href="/games">-->
                 <a class="start-link" v-on:click="emit">
-                    Согласен
+                    Играть
+                    <div v-if="loader">Loading...</div>
                 </a>
             </div>
         </div>
@@ -17,10 +18,31 @@
 
 <script>
     export default {
+        data: function() {
+            return {
+                loader: false
+            }
+        },
         methods: {
             emit: function () {
-                this.$emit('agree', 1);
+                if (this.loader) {
+                    return;
+                }
+                this.loader= true;
+                //this.$emit('agree', 1);
             },
         }
     };
 </script>
+
+<style lang="scss">
+
+    .title {
+        margin-bottom: 30px;
+    }
+
+    .start-link {
+        cursor: pointer;
+    }
+
+</style>

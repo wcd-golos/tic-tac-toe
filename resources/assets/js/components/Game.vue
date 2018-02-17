@@ -13,9 +13,10 @@
 <script>
     var golosJs = require('golos-js');
     var count= 3;
-
-    var username = 'a-borisov';
-    var privWif = '5JCQ7FGt4fWN5ggL1rqL9aFiT9Ah2c9494Ej6CQ7fNLuWXd4pF6';
+    var GAME_WIN = 1;
+    var GAME_FAIL = 0;
+    var GAME_IN_PROGRESS = 2;
+    var GAME_DRAW = 3;
 
     //верификация пользователя
     var verifyUser = () => {
@@ -91,18 +92,15 @@
     //0 => null
     //1 => X
     //2 => O
-    var map = [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0]
-    ];
+    var map = [];
 
     //init map values
-//    for(let i = 0; i < count; i++) {
-//        for(let j = 0; j < count; j++) {
-//            map[i][j] = 0;
-//        }
-//    }
+    for(let i = 0; i < count; i++) {
+        Vue.set(map, i, []);
+        for(let j = 0; j < count; j++) {
+            Vue.set(map[i], j, 0);
+        }
+    }
 
 
     //map codes to array index
@@ -128,41 +126,95 @@
     };
 
     let checkDiagonal = (symb) => {
-        let toright, toleft;
+        let toright, toleft, res = false;
+        let inProgress= false, isInProgressRight = false, isInProgressLeft = false;
+        let winClass = '';
         toright = true;
         toleft = true;
         for (let i=0; i < count; i++) {
             toright &= (map[i][i] == symb);
             toleft &= (map[count - i - 1][i] == symb);
+
+            isInProgressRight = (map[i][i] == 0);
+            isInProgressLeft = (map[count - i - 1][i] == 0);
         }
 
-        if (toright || toleft) return true;
+        if (toright) winClass = 'win-00-22';
+        if (toleft) winClass = 'win-20-02';
+        if (toright || toleft) res = true;
 
-        return false;
+        //если нет выйграша то проверка на незаконченную игру
+        if(!res) {
+            if (isInProgressRight || isInProgressLeft) inProgress = true;
+        }
+
+        if(res === true) {
+            return [GAME_WIN, winClass];
+        } else if(inProgress) {
+            return [GAME_IN_PROGRESS, winClass];
+        } else {
+            return [GAME_FAIL, winClass];
+        }
     };
 
     let checkLanes = (symb) => {
-        let cols = 0, rows = 0;
+        let cols = 0, rows = 0, res = false;
+        let inProgress= false, isInProgressRight = false, isInProgressLeft = false;
+        let winClass = '';
         for (let col=0; col < count; col++) {
             cols = true;
             rows = true;
             for (let row=0; row < count; row++) {
                 cols &= (map[col][row] == symb);
                 rows &= (map[row][col] == symb);
+
+                isInProgressRight = (map[col][row] == 0);
+                isInProgressLeft = (map[row][col] == 0);
             }
 
-            if (cols || rows) return true;
+            if (cols) winClass = 'win-'+col+'0-'+col+'2';
+            if (rows) winClass = 'win-0'+col+'-2'+col;
+            if (cols || rows) return [GAME_WIN, winClass];
+        }
+        //если нет выйграша то проверка на незаконченную игру
+        if(!res) {
+            if (isInProgressRight || isInProgressLeft) inProgress = true;
         }
 
-        return false;
+        if(inProgress) {
+            return [GAME_IN_PROGRESS, winClass];
+        } else {
+            return [GAME_FAIL, winClass];
+        }
     };
+
+    let isGameEnded = () => {
+        for (let col=0; col < count; col++) {
+            for (let row=0; row < count; row++) {
+                if(map[col][row] == 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     let checkWin = (sym) => {
-        return checkLanes(sym) || checkDiagonal(sym);
+        let resLines = checkLanes(sym);
+        let resDiags = checkDiagonal(sym);
+        
+        if(resLines[0] == GAME_WIN) {
+            console.log(resLines[1]);
+            return GAME_WIN;
+        } else if(resDiags[0] == GAME_WIN) {
+            console.log(resDiags[1]);
+            return GAME_WIN;
+        } else if(checkLanes(sym)[0] == GAME_IN_PROGRESS || checkDiagonal(sym)[0] == GAME_IN_PROGRESS) {
+            return GAME_IN_PROGRESS;
+        } else if (isGameEnded()) {
+            return GAME_DRAW;
+        }
     };
-
-
-
 
     export default {
         data: () => {
@@ -185,18 +237,20 @@
                 } else {
                     Vue.set(map[i], j, 1);
                     let res = checkWin(1);
-                    if(res) {
+                    if(res == GAME_WIN) {
                         alert('!!!Вы выйграли!!!');
+                    } else if(res == GAME_DRAW) {
+                        alert('Ничья!');
                     }
                 }
             },
             onInit() {
-//                var timer = setInterval(function() {
-//                    Vue.set(map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), Math.floor(Math.random() * 3));
-//                    let res = checkWin(1);
-//                    if(res) clearInterval(timer);
-//                    console.log('Результат: ' + (res ? 'win' : 'fail'));
-//                }, 100);
+                var timer = setInterval(function() {
+                    Vue.set(map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), Math.floor(Math.random() * 3));
+                    let res = checkWin(1);
+                    if(res == GAME_WIN) clearInterval(timer);
+                    console.log('Результат: ' + (res));
+                }, 100);
 
             }
         }
