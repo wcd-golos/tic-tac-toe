@@ -1,27 +1,44 @@
 <template>
     <section class="game-proccess">
         <div class="header">
-            <h2>Вася VS Петя</h2>
+            <h2>{{ myName }} VS {{ hisName }}</h2>
         </div>
         <div class="proccess">
             <div class="sect">
                 <div class="member">
-                    <h3>Вася</h3>
+                    <h3>{{ myName }}</h3>
                     <img src="images/muted-left.png" alt="" class="ava-member">
                 </div>
             </div>
             <div class="sect">
-                <div class="str" v-for="(row,i) in map" :key="i">
-                <div class="col" v-for="(col, j) in map[i]" :key="j">
-                <div v-if="map[i][j] == 1" v-on:click="step(i, j)">O</div>
-                <div v-else-if="map[i][j] == 2" v-on:click="step(map[i][j], i, j)">X</div>
-                <div v-if-else="map[i][j] == 0" v-on:click="step(map[i][j], i, j)">&nbsp;</div>
-                </div>
+                <div class="field-container">
+                    <h3 v-if="myStep">
+                        <span v-if="time != 0">Ваш ход через {{ time }} сек.</span>
+                        <span v-else>Ваш ход!</span>
+                    </h3>
+                    <h3 v-if="!myStep">Ход оппонента</h3>
+
+                    <div class="field">
+                        <div class="str" v-for="(row,i) in map" :key="i">
+                            <div class="col" v-for="(col, j) in map[i]" :key="j">
+                                <div v-if="map[i][j] == 1" v-on:click="step(i, j)">O</div>
+                                <div v-else-if="map[i][j] == 2" v-on:click="step(map[i][j], i, j)">X</div>
+                                <div v-else-if="map[i][j] == 0" v-on:click="step(map[i][j], i, j)">&nbsp;</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--<div class="timer">-->
+                        <!--<p v-if="myStep">-->
+                            <!--<span v-if="time != 0">Ваш ход через {{ time }} сек.</span>-->
+                            <!--<span v-else>Ваш ход!</span>-->
+                        <!--</p>-->
+                    <!--</div>-->
                 </div>
             </div>
             <div class="sect">
                 <div class="member">
-                    <h3>Петя</h3>
+                    <h3>{{ hisName }}</h3>
                     <img src="images/active-right.png" alt="" class="ava-member">
                 </div>
             </div>
@@ -189,6 +206,8 @@
         return true;
     }
 
+    // symbol 0 is 1
+    // symbol X is 0
     let checkWin = (sym) => {
         let resLines = checkLines(sym);
         let resDiags = checkDiagonal(sym);
@@ -212,15 +231,30 @@
         data: () => {
             return {
                 map: map,
-                body: ''
+                body: '',
+                myName: '',
+                hisName: 'Петя',
+                myStep: true,
+                time: 20
             }
         },
         created: function() {
             this.onInit();
+            let permissions = JSON.parse(localStorage.permissions);
+            this.myName = permissions.user;
+            this.waitForStep();
         },
         methods: {
             verifyUser () {
                 verifyUser();
+            },
+            waitForStep() {
+                this.time = 20;
+                var timer = setInterval(() => {
+                    this.time--;
+                    console.log(this.time);
+                    if(this.time == 0) clearInterval(timer);
+                }, 1000);
             },
             step(valueInCell, i, j) {
                 if(valueInCell != 0) {
@@ -238,16 +272,38 @@
                 }
             },
             onInit() {
-//                var timer = setInterval(function() {
-//                    Vue.set(map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), Math.floor(Math.random() * 3));
-//                    let res = checkWin(1);
-//                    console.log(res);
-//                    if(res == undefined) clearInterval(timer);
-//                    if(res[0] == GAME_WIN) clearInterval(timer);
-//                    console.log('Результат: ' + (res[0]));
-//                }, 100);
+                var timer = setInterval(function() {
+                    Vue.set(map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), Math.floor(Math.random() * 3));
+                    let res = checkWin(1);
+                    console.log(res);
+                    if(res == undefined) clearInterval(timer);
+                    if(res[0] == GAME_WIN) clearInterval(timer);
+                    console.log('Результат: ' + (res[0]));
+                }, 100);
 
             }
         }
     };
 </script>
+
+<style>
+    .str {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .str:nth-child(2) {
+        border-top: 1px solid #000;
+        border-bottom: 1px solid #000;
+    }
+    .str .col {
+        padding: 10px;
+        background-color: #eee;
+        flex: 1 1 auto;
+        text-align: center;
+    }
+    .str .col:nth-child(2) {
+        border-left: 1px solid #000;
+        border-right: 1px solid #000;
+    }
+</style>
