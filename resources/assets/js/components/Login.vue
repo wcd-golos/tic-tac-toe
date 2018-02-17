@@ -13,10 +13,10 @@
 <script>
     var golos = require('golos-js');
 
-    var verifyUser = (username, password) => {
+    var verifyUser = (username, password, contex) => {
 
         //проверяем наличие аккаунта
-        golos.api.getAccounts([username], function(err, result) {
+        golos.api.getAccounts([username], (err, result) => {
             let postingPubkey = result[0].posting.key_auths[0][0];
             if (result.length) {
                 let roles = ['active', 'posting'];
@@ -28,9 +28,9 @@
                         active: keys.active
                     }
                     localStorage.permissions = JSON.stringify(permissions);
-                    //todo redirect
+                    contex.$emit('success', 1);
                 } else {
-                    console.log("Неверно имя пользователя либо пароль");
+                    alert("Неверно имя пользователя либо пароль");
                 }
             } else {
                 alert('В системе нет такого пользователя');
@@ -54,7 +54,7 @@
                     alert('Введите мастер пароль');
                     return;
                 }
-                verifyUser(this.username, this.masterPassword);
+                verifyUser(this.username, this.masterPassword, this);
             },
         }
     };
