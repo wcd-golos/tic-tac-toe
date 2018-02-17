@@ -10,6 +10,30 @@ function guid() {
         s4() + '-' + s4() + s4() + s4();
 }
 
+function comment(author, parentAuthor, wif, parentId, title, tags, cb) {
+    golosJs.api.login('', '', function(err, result) {
+        if (err || !result) {
+            return cb(err);
+        }
+
+        var newId = Game.generateId();
+        var body = JSON.stringify({creator: author});
+        var tags = [parentId].concat(tags);
+
+        var jsonMetadata = {
+            tags: tags
+        };
+
+        if (err || !result) {
+            return cb(err);
+        }
+
+        golosJs.broadcast.comment(wif, parentAuthor, parentId, author, newId, title, body, JSON.stringify(jsonMetadata), function(err, result) {
+            cb(err, result, newId);
+        });
+    });
+}
+
 function Game( id, author ) {
     this.id = id;
     this.author = author;
@@ -41,8 +65,13 @@ Game.prototype.persist = function () {
     localStorage.currentGame = JSON.stringify(game);
 };
 
-Game.prototype.move = function( x, y ) {
+Game.prototype.move = function( x, y, cb ) {
+    console.log('move');
 
+    comment(username, game.author, wif, game.id, username, ['MOVE'], function(err, result, id) {
+        console.log('MOVE', err, result);
+        cb(err, result);
+    });
 };
 
 Game.getCurrentGame = function() {
@@ -108,31 +137,17 @@ Game.getGame = function( author, gameId, cb ) {
 };
 
 Game.createGame = function ( wif, author, cb ) {
-    golosJs.api.login('', '', function(err, result) {
-        if (err || !result) {
+    var title = `Игра создана ${ author }`;
+    comment(author, '', wif, Game.PARENT_PERMLINK, title, ['test'], function(err, result, gameId) {
+        console.log('CREATE post/comment', err, result);
+
+        if (err) {
             return cb(err);
         }
 
-        var gameId = Game.generateId();
-        var title = `Игра создана ${ author }`;
-        var body = JSON.stringify({creator: author});
-        var jsonMetadata = {
-            tags: [Game.PARENT_PERMLINK, 'test']
-        };
+        var game = new Game(gameId, author);
 
-        if (err || !result) {
-            return cb(err);
-        }
-
-        golosJs.broadcast.comment(wif, '', Game.PARENT_PERMLINK, author, gameId, title, body, JSON.stringify(jsonMetadata), function(err, result) {
-            if (err) {
-                return cb(err);
-            }
-
-            var game = new Game(gameId, author);
-
-            cb(null, game);
-        });
+        cb(null, game);
     });
 };
 
@@ -197,7 +212,10 @@ Game.play = function(wif, username, cb) {
 Game.prototype.join = function( username, cb ) {
     console.log('join');
 
-
+    comment(username, this.author, wif, this.id, username, ['OPPONENT'], function(err, result, id) {
+        console.log('CREATE post/comment', err, result);
+        cb(err, result);
+    });
 };
 
 Game.generateId = function () {

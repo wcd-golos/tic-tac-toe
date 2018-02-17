@@ -38,6 +38,17 @@
         props: ['username', 'wif'],
 
         created: function() {
+            Game.play(this.wif, this.username, function(err, game) {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+
+                this.agreement = false;
+                this.game = true;
+                this.gameWrapper = game;
+            });
+
             getCurrentState((state, game) => {
                 this.agreement = state != STATUS_PLAYING;
                 this.game = state == STATUS_PLAYING;
