@@ -2,9 +2,9 @@
     <div>
         <div class="str" v-for="(row,i) in map">
             <div class="col" v-for="(col, j) in map[i]">
-                <div v-if="map[i][j] == 1">O</div>
-                <div v-else-if="map[i][j] == 2">X</div>
-                <div v-else="map[i][j] == 0">&nbsp;</div>
+                <div v-if="map[i][j] == 1" v-on:click="step(i, j)">O</div>
+                <div v-else-if="map[i][j] == 2" v-on:click="step(map[i][j], i, j)">X</div>
+                <div v-else="map[i][j] == 0" v-on:click="step(map[i][j], i, j)">&nbsp;</div>
             </div>
         </div>
     </div>
@@ -178,13 +178,25 @@
             verifyUser () {
                 verifyUser();
             },
-            onInit() {
-                var timer = setInterval(function() {
-                    Vue.set(map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), Math.floor(Math.random() * 3));
+            step(valueInCell, i, j) {
+                if(valueInCell != 0) {
+                    alert('Вы не можете сделать ход в эту клетку');
+                    return;
+                } else {
+                    Vue.set(map[i], j, 1);
                     let res = checkWin(1);
-                    if(res) clearInterval(timer);
-                    console.log('Результат: ' + (res ? 'win' : 'fail'));
-                }, 100);
+                    if(res) {
+                        alert('!!!Вы выйграли!!!');
+                    }
+                }
+            },
+            onInit() {
+//                var timer = setInterval(function() {
+//                    Vue.set(map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), Math.floor(Math.random() * 3));
+//                    let res = checkWin(1);
+//                    if(res) clearInterval(timer);
+//                    console.log('Результат: ' + (res ? 'win' : 'fail'));
+//                }, 100);
 
             }
         }
