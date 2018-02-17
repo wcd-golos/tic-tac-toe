@@ -2,7 +2,7 @@
     <div class="gradient">
         <div class="screen2">
             <h3>Добро пожаловать! <br> Играть <b>=</b> <span>0.01 голос</span></h3>
-            <a href="javascript:void(0);" v-if="!loader" class="link-btn" v-on:click="emit">СОГЛАСЕН</a>
+            <a href="javascript:void(0);" v-if="!loader" class="link-btn" v-on:click="emit">ИГРАТЬ</a>
             <div v-if="loader">Загрузка...</div>
         </div>
     </div>
