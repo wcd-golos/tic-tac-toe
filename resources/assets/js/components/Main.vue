@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <div v-if="login">
+    <div class="fullheight">
+        <div v-if="login" class="fullheight">
             <login></login>
         </div>
         <div v-else-if="agreement">
