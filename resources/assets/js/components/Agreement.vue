@@ -29,7 +29,7 @@
                     return;
                 }
                 this.loader= true;
-                //this.$emit('agree', 1);
+                this.$emit('agree', 1);
             },
         }
     };

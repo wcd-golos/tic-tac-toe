@@ -4,7 +4,7 @@
             <agreement v-on:agree="agree"></agreement>
         </div>
         <div v-else-if="game">
-            <game></game>
+            <game v-bind:game="gameWrapper"></game>
         </div>
     </div>
 </template>
@@ -58,11 +58,7 @@
         }
 
         Game.getGame(activeGame.author, activeGame.id, function (err, game) {
-            if (err) {
-                return cb(Game.STATUS_NEW);
-            }
-
-            if (game == null || game.isNew) {
+            if (err || game == null) {
                 return cb(Game.STATUS_NEW);
             }
 
@@ -74,16 +70,18 @@
         props: ['username', 'wif'],
 
         created: function() {
-            getCurrentState((state) => {
+            getCurrentState((state, game) => {
                 this.agreement = state != STATUS_PLAYING;
-                this.findGame = state == STATUS_PLAYING;
+                this.game = state == STATUS_PLAYING;
+                this.gameWrapper = game;
             });
         },
 
         data: function () {
             return {
                 agreement: true,
-                game: false
+                game: false,
+                game: null
             }
         },
 
@@ -93,9 +91,16 @@
             },
 
             agree: function(id) {
-                console.log('Agree clicked');
-                this.agreement = false;
-                this.findGame = true;
+                Game.play(this.wif, this.username, function(err, game) {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+
+                    this.agreement = false;
+                    this.game = true;
+                    this.gameWrapper = game;
+                });
             }
         }
     };

@@ -33,6 +33,10 @@ Game.prototype.persist = function () {
     localStorage.currentGame = JSON.stringify(game);
 };
 
+Game.prototype.move = function( x, y ) {
+
+};
+
 Game.getCurrentGame = function() {
     var defaultResult = { id: 0, author: null };
 
@@ -70,28 +74,30 @@ Game.getGame = function( author, gameId, cb ) {
 };
 
 Game.createGame = function ( wif, author, cb ) {
-    golos.api.login('', '', function(err, result) {
+    golosJs.api.login('', '', function(err, result) {
         if (err || !result) {
             return cb(err);
         }
 
-        var permlink = Game.generateId();
+        var gameId = Game.generateId();
         var title = `Игра создана ${ author }`;
-        var body = JSON.stringify({creator: username});
+        var body = JSON.stringify({creator: author});
         var jsonMetadata = '{}';
 
-        golos.api.login('', '', function(err, result) {
+        golosJs.api.login('', '', function(err, result) {
 
             if (err || !result) {
                 return cb(err);
             }
 
-            golos.broadcast.comment(wif, '', Game.PARENT_PERMLINK, author, permlink, title, body, jsonMetadata, function(err, result) {
+            golosJs.broadcast.comment(wif, '', Game.PARENT_PERMLINK, author, gameId, title, body, jsonMetadata, function(err, result) {
                 if (err) {
                     return cb(err);
                 }
 
-                cb(null, new Game());
+                var game = new Game(gameId, author);
+
+                cb(null, game);
             });
         });
     });
@@ -103,7 +109,7 @@ Game.getLastGame = function (cb) {
         limit: 1,
     }
 
-    golos.api.getDiscussionsByTrending(query, (err, result) => {
+    golosJs.api.getDiscussionsByTrending(query, (err, result) => {
 
         if (err) {
             return cb(err);
@@ -113,18 +119,24 @@ Game.getLastGame = function (cb) {
     });
 };
 
-Game.play = function(cb) {
+Game.play = function(wif, username, cb) {
     Game.getLastGame((err, game) => {
         if (err) {
             return cb(err);
         }
 
-        if (game == null || !game.isNew) {
-            return Game.createGame(0,0, cb);
+        if (game == null || game.state != Game.STATUS_NEW) {
+            return Game.createGame(wif, username, cb);
         }
 
-        return cb(null, game);
+        game.join(username, function(err) {
+            cb(err, game);
+        });
     });
+};
+
+Game.prototype.join = function( username, cb ) {
+
 };
 
 Game.generateId = function () {

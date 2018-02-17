@@ -1,5 +1,6 @@
 <template>
     <div>
+        {{ game.id }}
         <div class="str" v-for="(row,i) in map">
             <div class="col" v-for="(col, j) in map[i]">
                 <div v-if="map[i][j] == 1" v-on:click="step(i, j)">O</div>
@@ -217,6 +218,8 @@
     };
 
     export default {
+        props: ['game'],
+
         data: () => {
             return {
                 map: map,
