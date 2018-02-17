@@ -11,14 +11,7 @@ body {
     font-size: 16px;
     font-family: 'Jura', sans-serif;
     font-weight: 400;
-}
-
-#app {
-    height: 100%;
-}
-
-.fullheight {
-    height: 100vh;
+    background-color: #FCFFF5;
 }
 
 .wrapper {
@@ -82,7 +75,8 @@ body {
     .input-group-item {
         width: 470px;
 
-        input[type=text], input[type=password] {
+        input[type=text],
+        input[type=password] {
             display: block;
             width: 100%;
             border: none;
@@ -109,6 +103,7 @@ body {
     }
 
 }
+
 .screen2 {
     color: #FCFFF5;
     text-align: center;
@@ -122,6 +117,7 @@ body {
         }
     }
 }
+
 .link-btn {
     background-color: #CBDBD7;
     width: 100%;
@@ -142,24 +138,76 @@ body {
         color: #fff;
     }
 }
+
 .game-proccess {
     height: 100%;
+
     .header {
         padding: 10px;
         box-sizing: border-box;
         /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#2b799b+0,3e606f+100 */
+
         background: #2b799b;
         /* Old browsers */
+
         background: -moz-radial-gradient(center, ellipse cover, #2b799b 0%, #3e606f 100%);
         /* FF3.6-15 */
+
         background: -webkit-radial-gradient(center, ellipse cover, #2b799b 0%, #3e606f 100%);
         /* Chrome10-25,Safari5.1-6 */
+
         background: radial-gradient(ellipse at center, #2b799b 0%, #3e606f 100%);
         /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+
         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2b799b', endColorstr='#3e606f', GradientType=1);
         /* IE6-9 fallback on horizontal gradient */
+
         display: flex;
         align-items: center;
         justify-content: center;
+        margin-bottom: 10px;
+        h2 {
+            color: #fff;
+            font-weight: 300;
+        }
+    }
+    .proccess {
+        background-color: rgba(#D8D8D8, 0.16);
+        height: 660px;
+        width: 940px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+
+        .sect {
+            padding: 10px;
+            box-sizing: border-box;
+
+            &:first-child,
+            &:last-child {
+                width: 220px;
+            }
+            &:nth-child(2) {
+                flex: 1;
+                margin-left: 20px;
+                margin-right: 20px;
+            }
+        }
+
+    }
+}
+
+.member {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    h3 {
+        text-align: center;
+        margin-bottom: 35px;
+    }
+    .ava-member {
+        display: block;
+        max-width: 100%;
     }
 }

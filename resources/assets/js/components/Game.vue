@@ -1,14 +1,58 @@
 <template>
-    <div>
-        {{ game.id }}
-        <div class="str" v-for="(row,i) in map" :key="i">
-            <div class="col" v-for="(col, j) in map[i]" :key="j">
-                <div v-if="map[i][j] == 1" v-on:click="step(i, j)">O</div>
-                <div v-else-if="map[i][j] == 2" v-on:click="step(map[i][j], i, j)">X</div>
-                <div v-if-else="map[i][j] == 0" v-on:click="step(map[i][j], i, j)">&nbsp;</div>
+    <section class="game-proccess">
+        <div class="header">
+            <h2>{{ myName }} VS {{ hisName }}</h2>
+        </div>
+        <div class="proccess">
+            <div class="sect">
+                <div class="member">
+                    <h3>{{ myName }}</h3>
+                    <img src="images/muted-left.png" alt="" class="ava-member">
+                </div>
+            </div>
+            <div class="sect">
+                <div class="field-container">
+                    <h3 v-if="myStep">
+                        <span v-if="time != 0">Ваш ход через {{ time }} сек.</span>
+                        <span v-else>Ваш ход!</span>
+                    </h3>
+                    <h3 v-if="!myStep">Ход оппонента</h3>
+
+                    <div class="field">
+                        <div class="str" v-for="(row,i) in map" :key="i">
+                            <div class="col" v-for="(col, j) in map[i]" :key="j">
+                                <div v-if="map[i][j] == 1" v-on:click="step(i, j)">O</div>
+                                <div v-else-if="map[i][j] == 2" v-on:click="step(map[i][j], i, j)">X</div>
+                                <div v-else-if="map[i][j] == 0" v-on:click="step(map[i][j], i, j)">&nbsp;</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--<div class="timer">-->
+                        <!--<p v-if="myStep">-->
+                            <!--<span v-if="time != 0">Ваш ход через {{ time }} сек.</span>-->
+                            <!--<span v-else>Ваш ход!</span>-->
+                        <!--</p>-->
+                    <!--</div>-->
+                </div>
+            </div>
+            <div class="sect">
+                <div class="member">
+                    <h3>{{ hisName }}</h3>
+                    <img src="images/active-right.png" alt="" class="ava-member">
+                </div>
             </div>
         </div>
-    </div>
+    </section>
+    <!--<div>-->
+        <!--<div class="str" v-for="(row,i) in map" :key="i">-->
+            <!--<div class="col" v-for="(col, j) in map[i]" :key="j">-->
+                <!--<div v-if="map[i][j] == 1" v-on:click="step(i, j)">O</div>-->
+                <!--<div v-else-if="map[i][j] == 2" v-on:click="step(map[i][j], i, j)">X</div>-->
+                <!--<div v-if-else="map[i][j] == 0" v-on:click="step(map[i][j], i, j)">&nbsp;</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
 </template>
 
 <script>
@@ -18,37 +62,6 @@
     var GAME_FAIL = 0;
     var GAME_IN_PROGRESS = 2;
     var GAME_DRAW = 3;
-
-    // //верификация пользователя
-    // var verifyUser = () => {
-
-    //     //Проверяем наличие акаунта
-    //     //Делаем запрос на получение акаутна по введенному логину
-    //     golosJs.api.getAccounts([username], function(err, result) {
-    //         //Проверяем есть ли возвращенные значения
-    //         if (result.length) {
-    //             //Берем публичный ключ
-    //             var pubWif = result[0].posting.key_auths[0][0];
-    //             //Проверяем введенный пользователем приватный ключ на валидность
-    //             if (golosJs.auth.isWif(privWif)) {
-    //                 //Проверяем соответствие приватного и публичного ключей
-    //                 if (golosJs.auth.wifIsValid(privWif, pubWif)) {
-    //                     //Привязываем данные Голоса к аккаунту пользователя
-    //                     console.log("Success!");
-    //                 } else {
-    //                     //Возвращаем сообщение об ошибке "Не соответствие приватного и публичного ключей"
-    //                     console.log('The private key does not match the public key');
-    //                 }
-    //             } else {
-    //                 //Возвращаем сообщение об ошибке "Указанный приватный ключ не является валидным"
-    //                 console.log('The private key specified is not valid');
-    //             }
-    //         } else {
-    //             //возврат ошибки "Учетная запись пользователя не определена"
-    //             console.log('user account is not defined')
-    //         }
-    //     });
-    // };
 
     let addPost = (title, body) => {
         //Добавить пост
@@ -193,6 +206,8 @@
         return true;
     }
 
+    // symbol 0 is 1
+    // symbol X is 0
     let checkWin = (sym) => {
         let resLines = checkLines(sym);
         let resDiags = checkDiagonal(sym);
@@ -216,15 +231,30 @@
         data: () => {
             return {
                 map: map,
-                body: ''
+                body: '',
+                myName: '',
+                hisName: 'Петя',
+                myStep: true,
+                time: 20
             }
         },
         created: function() {
             this.onInit();
+            let permissions = JSON.parse(localStorage.permissions);
+            this.myName = permissions.user;
+            this.waitForStep();
         },
         methods: {
             verifyUser () {
                 verifyUser();
+            },
+            waitForStep() {
+                this.time = 20;
+                var timer = setInterval(() => {
+                    this.time--;
+                    console.log(this.time);
+                    if(this.time == 0) clearInterval(timer);
+                }, 1000);
             },
             step(valueInCell, i, j) {
                 if(valueInCell != 0) {
@@ -255,3 +285,25 @@
         }
     };
 </script>
+
+<style>
+    .str {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .str:nth-child(2) {
+        border-top: 1px solid #000;
+        border-bottom: 1px solid #000;
+    }
+    .str .col {
+        padding: 10px;
+        background-color: #eee;
+        flex: 1 1 auto;
+        text-align: center;
+    }
+    .str .col:nth-child(2) {
+        border-left: 1px solid #000;
+        border-right: 1px solid #000;
+    }
+</style>
