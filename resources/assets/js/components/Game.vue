@@ -91,18 +91,15 @@
     //0 => null
     //1 => X
     //2 => O
-    var map = [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0]
-    ];
+    var map = [];
 
     //init map values
-//    for(let i = 0; i < count; i++) {
-//        for(let j = 0; j < count; j++) {
-//            map[i][j] = 0;
-//        }
-//    }
+    for(let i = 0; i < count; i++) {
+        Vue.set(map, i, []);
+        for(let j = 0; j < count; j++) {
+            Vue.set(map[i], j, 0);
+        }
+    }
 
 
     //map codes to array index
@@ -160,9 +157,6 @@
     let checkWin = (sym) => {
         return checkLanes(sym) || checkDiagonal(sym);
     };
-
-
-
 
     export default {
         data: () => {
