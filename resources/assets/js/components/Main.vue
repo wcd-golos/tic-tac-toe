@@ -19,10 +19,6 @@
     var STATUS_PLAYING = 1;
     var STATUS_DONE = 2;
 
-    var getActiveGame  = function () {
-        return localStorage.currentGame || 0;
-    };
-
     var getCurrentState = function (cb) {
         var activeGame = Game.getCurrentGame();
         if (!activeGame.id) {
@@ -42,6 +38,17 @@
         props: ['username', 'wif'],
 
         created: function() {
+            Game.play(this.wif, this.username, function(err, game) {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+
+                this.agreement = false;
+                this.game = true;
+                this.gameWrapper = game;
+            });
+
             getCurrentState((state, game) => {
                 this.agreement = state != STATUS_PLAYING;
                 this.game = state == STATUS_PLAYING;
