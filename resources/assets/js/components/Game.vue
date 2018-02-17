@@ -14,9 +14,6 @@
     var golosJs = require('golos-js');
     var count= 3;
 
-    var username = 'a-borisov';
-    var privWif = '5JCQ7FGt4fWN5ggL1rqL9aFiT9Ah2c9494Ej6CQ7fNLuWXd4pF6';
-
     //верификация пользователя
     var verifyUser = () => {
 
@@ -124,18 +121,36 @@
         return [first, second];
     };
 
+    // 0 - ничья
+    // 1 - выйграл
+    // 2 - игра в процессе
     let checkDiagonal = (symb) => {
-        let toright, toleft;
+        let toright, toleft, res = false;
+        let inProgress= false, isInProgressRight = false, isInProgressLeft = false;
         toright = true;
         toleft = true;
         for (let i=0; i < count; i++) {
             toright &= (map[i][i] == symb);
             toleft &= (map[count - i - 1][i] == symb);
+
+            isInProgressRight = (map[i][i] == 0);
+            isInProgressLeft = (map[count - i - 1][i] == 0);
         }
 
-        if (toright || toleft) return true;
+        if (toright || toleft) res = true;
 
-        return false;
+        //если нет выйграша то проверка на незаконченную игру
+        if(!res) {
+            if (isInProgressRight || isInProgressLeft) inProgress = true;
+        }
+
+        if(res === true) {
+            return 1;
+        } else if(inProgress) {
+            return 2;
+        } else {
+            return 0;
+        }
     };
 
     let checkLanes = (symb) => {
