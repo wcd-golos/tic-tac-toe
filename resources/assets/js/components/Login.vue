@@ -23,10 +23,6 @@
                 let roles = ['active', 'posting'];
                 let keys = golos.auth.getPrivateKeys(username, password, roles);
                 if (postingPubkey === keys.postingPubkey) {
-                    //TODO взять 
-                    var gameGolosRate = 0.011;
-                    checkAccountGolosCount(username, gameGolosRate);
-
                     let permissions =  {
                         user: username,
                         posting: keys.posting,
@@ -45,23 +41,7 @@
         });
     };
 
-    //проверяем достаточно ли голосов у пользователя
-    let checkAccountGolosCount = (username, gameGolosRate) => {
-        golos.api.getAccounts([username], function(err, response){
-            if (!err) {
-                $.each(response, function(index, val) {
-                    var golos_count = parseFloat(val.balance.slice(0, -5)).toFixed(3);
-                    if (golos_count < gameGolosRate) {
-                        return false;
-                        alert('У вас не достаточно средств на счету для начала игры');
-                    }
-                });
-            } else {
-                alert('Не удалось получить данные аккаунта');
-            }
-            return true;
-        });
-    }
+    
 
     export default {
         data: function() {

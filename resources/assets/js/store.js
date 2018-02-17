@@ -8,7 +8,12 @@ const store = new Vuex.Store({
         user: 'tet',
         posting: '',
         active: '',
-        state: 0
+        state: 0,
+        game_golos_rate: 0.010,
+        game_gbg_rate: 0.000,
+        game_commision: 0.001,
+        agent: 'timur.zevriev',
+        aget_active_wif: '5JmAaq8NGKHEZDiccH1AtYfHPVpUo1TB2Ls89gACYpN3nchDPgG'
     },
     mutations: {
         permissions (state, perm) {

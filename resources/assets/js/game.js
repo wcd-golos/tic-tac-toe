@@ -50,8 +50,8 @@ function Game( id, author ) {
     ];
 }
 
-function createTransfer(from, active_wif, to, agent, gbg_amount, golos_amount, fee, sendDeadline, sendEscrowExpiration, terms) 
-{
+// создать транзакцию
+function createTransfer(from, active_wif, to, agent, gbg_amount, golos_amount, fee, sendDeadline, sendEscrowExpiration, terms) {
     console.log('create transfer');
 
     //генерация id транзакции
@@ -95,6 +95,83 @@ function createTransfer(from, active_wif, to, agent, gbg_amount, golos_amount, f
             }
         );
     });
+}
+
+
+//получить транзакцию
+function loadTransaction(from, escrow_id) {
+
+    golosJs.api.getEscrow(
+        from, //отправитель
+        escrow_id, // id транзакции
+        function(err, response) {
+            console.log('load transaction: ', response, err);
+            if(err) {
+                alert('Не удолось получить транзакцию');
+            }
+        }
+    )
+}
+
+
+// подтверждение перевода агентом и получателем
+function approveTransaction(login, wif, from, to, agent, escrow_id, approve) {
+    golosJs.broadcast.escrowApprove(
+        wif, // активный ключ подтверждающего
+        from, // от кого перевод
+        to, // кому перевод
+        agent, 
+        login, // тот кто подтверждает
+        escrow_id, // id транзакции
+        approve, // true or false
+        function(err, response) {
+            //console.log('approveTransaction: ', response, err);
+            if (err) {
+                alert('Не удалось подтвердить транзакцию');
+            }
+        }
+    );
+}
+
+
+// агент решает кому пойдут деньги или отказ от денег одним из пользователей (после подтверждения получателем и агентом, отправитель разрешает перевод)
+function releaseTransaction(login, wif, from, to, agent, escrow_id, reciever, gbg_amount, golos_amount) {
+    golosJs.broadcast.escrowRelease(
+        wif, // ключ того кто отказываеться от денег
+        from, // от кого транзакция
+        to, // кому
+        agent, 
+        login, // тот кто отказываеться от денег
+        reciever, // тот кто получает деньги
+        escrow_id, // id транзакции
+        gbg_amount, // колличество золотых голосов в транзакции
+        golos_amount, // колличество голосов в транзакции
+        function(err, response) {
+            //console.log('releaseTransaction: ', response, err);
+            if (err) {
+                alert('Не удалось подтвердить оканчательное отправление денег');
+            }
+        }
+    );
+}
+
+
+// открыть спор для транзакции
+function disputeTransaction (login, wif, from, to, agent, escrow_id) {
+    golosJs.broadcast.escrowDispute(
+        wif,
+        from,
+        to,
+        agent,
+        login, // тот кто открывает спор
+        escrow_id,
+        function(err, response) {
+            //console.log('disputeTransaction: ', response, err);
+            if (err) {
+                alert('Не удалось подтвердить оканчательное отправление денег');
+            }
+        }
+    );
 }
 
 
@@ -271,10 +348,6 @@ Game.generateId = function () {
     return guid();
 };
 
-
-Game.createTransfers = function () {
-    
-}
 
 
 window.Game = Game;

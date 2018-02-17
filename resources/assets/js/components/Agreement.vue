@@ -9,8 +9,27 @@
 </template>
 
 <script>
-
+    var golosJs = require('golos-js');
     //import Store from './../store'
+
+
+    //проверяем достаточно ли голосов у пользователя
+    let checkAccountGolosCount = (username, game_golos_rate) => {
+        golosJs.api.getAccounts([username], function(err, response){
+            if (!err) {
+                $.each(response, function(index, val) {
+                    var golos_count = parseFloat(val.balance.slice(0, -5)).toFixed(3);
+                    if (golos_count < game_golos_rate) {
+                        return false;
+                        alert('У вас не достаточно средств на счету для начала игры');
+                    }
+                });
+            } else {
+                alert('Не удалось получить данные аккаунта');
+            }
+            return true;
+        });
+    }
 
     export default {
         data: function() {
@@ -20,6 +39,7 @@
         },
         methods: {
             emit: function () {
+                checkAccountGolosCount(this.$store.state.user, this.$store.state.game_golos_rate);
                 if (this.loader) {
                     return;
                 }
