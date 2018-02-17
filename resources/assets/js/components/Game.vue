@@ -91,14 +91,18 @@
     //0 => null
     //1 => X
     //2 => O
-    var map = [];
+    var map = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+    ];
 
     //init map values
-    for(let i = 0; i < count; i++) {
-        for(let j = 0; j < count; j++) {
-            map[i][j] = 0;
-        }
-    }
+//    for(let i = 0; i < count; i++) {
+//        for(let j = 0; j < count; j++) {
+//            map[i][j] = 0;
+//        }
+//    }
 
 
     //map codes to array index
