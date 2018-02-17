@@ -1,11 +1,11 @@
 <template>
     <div>
         {{ game.id }}
-        <div class="str" v-for="(row,i) in map">
-            <div class="col" v-for="(col, j) in map[i]">
+        <div class="str" v-for="(row,i) in map" :key="i">
+            <div class="col" v-for="(col, j) in map[i]" :key="j">
                 <div v-if="map[i][j] == 1" v-on:click="step(i, j)">O</div>
                 <div v-else-if="map[i][j] == 2" v-on:click="step(map[i][j], i, j)">X</div>
-                <div v-else="map[i][j] == 0" v-on:click="step(map[i][j], i, j)">&nbsp;</div>
+                <div v-if-else="map[i][j] == 0" v-on:click="step(map[i][j], i, j)">&nbsp;</div>
             </div>
         </div>
     </div>
