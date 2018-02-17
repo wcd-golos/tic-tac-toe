@@ -5,6 +5,7 @@
 /storage/*.key
 /public/js/*.js
 /public/css/*.css
+/public/*.json
 /vendor
 /.idea
 /.vagrant
