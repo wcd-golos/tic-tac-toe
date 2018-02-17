@@ -27,13 +27,11 @@
                 //this.$emit('agree', 1);
                 //проверям есть ли активне посты
                 //если нет создаем нувую игру
-                
                 console.log('store', this.$store.state.user);
-
-                Game.play(this.$store.state.posting, this.$store.state.user, (err, result) => {
-                    //conole.log('err', err);
-                    //console.log('res'. result);
-                });
+                // Game.play(this.$store.state.posting, this.$store.state.user, (err, result) => {
+                //     //conole.log('err', err);
+                //     //console.log('res'. result);
+                // });
             },
         }
     };

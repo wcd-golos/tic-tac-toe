@@ -19,8 +19,6 @@ window.Vuex = require('vuex');
  */
 
 import store from './store';
-// window.Store = Store;
-//const store = Store;
 
 Vue.component('find-game', require('./components/FindGame.vue'));
 Vue.component('agreement', require('./components/Agreement.vue'));
