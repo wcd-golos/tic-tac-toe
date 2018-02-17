@@ -1,12 +1,12 @@
 <template>
     <div class="fullheight">
-        <div v-if="login" class="fullheight">
+        <div v-if="$store.state.state == 0" class="fullheight">
             <login v-on:success="logged"></login>
         </div>
-        <div v-else-if="agreement" class="fullheight">
+        <div v-if="$store.state.state == 1" class="fullheight">
             <agreement v-on:agree="agree"></agreement>
         </div>
-        <div v-else-if="game" class="fullheight">
+        <div v-if="$store.state.state == 2" class="fullheight">
             <game v-bind:game="gameWrapper"></game>
         </div>
     </div>
@@ -38,27 +38,37 @@
             let permStorage = localStorage['permissions'];
             if (permStorage != undefined) {
                 let permissions = JSON.parse(permStorage);
+                //this.login = false;
+                //this.agreement = true;
+                //this.$store.commit('state', 1);
+                this.$store.commit('permissions', permissions);
+                //console.log('user', this.$store.state.user)            
+                // Game.play(permissions.posting, permissions.user, function(err, game) {
+                //     if (err) {
+                //         console.log(err);
+                //         return;
+                //     }
                 this.user = {
                     login: permissions.user,
                     key: permissions.posting
                 };
 
-                this.login = false;
-                this.agreement = true;
+                //this.login = false;
+                //this.agreement = true;
             }
 
             getCurrentState((state, game) => {
-                this.agreement = state != STATUS_PLAYING;
-                this.game = state == STATUS_PLAYING;
+                //this.agreement = state != STATUS_PLAYING;
+                //this.game = state == STATUS_PLAYING;
                 this.gameWrapper = game;
             });
         },
 
         data: function () {
             return {
-                login: true,
-                agreement: false,
-                game: false,
+                //login: true,
+                //agreement: false,
+                //game: false,
                 user: null
             }
         },
@@ -75,16 +85,15 @@
                         return;
                     }
 
-                    this.login = false;
-                    this.agreement = false;
-                    this.game = true;
-                    this.gameWrapper = game;
+                //     this.login = false;
+                //     this.agreement = false;
+                //     this.game = true;
+                //     this.gameWrapper = game;
                 });
             },
-
             logged: function(id) {
-                this.login = false;
-                this.agreement = true;
+                //this.login = false;
+                //this.agreement = true;
             }
         }
     };

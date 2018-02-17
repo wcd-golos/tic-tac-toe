@@ -9,6 +9,9 @@
 </template>
 
 <script>
+
+    //import Store from './../store'
+
     export default {
         data: function() {
             return {
@@ -21,14 +24,20 @@
                     return;
                 }
                 this.loader= true;
-                this.$emit('agree', 1);
+                //this.$emit('agree', 1);
+                //проверям есть ли активне посты
+                //если нет создаем нувую игру
+                console.log('store', this.$store.state.user);
+                // Game.play(this.$store.state.posting, this.$store.state.user, (err, result) => {
+                //     //conole.log('err', err);
+                //     //console.log('res'. result);
+                // });
             },
         }
     };
 </script>
 
 <style lang="scss">
-
     .title {
         margin-bottom: 30px;
     }
@@ -36,5 +45,4 @@
     .start-link {
         cursor: pointer;
     }
-
 </style>

@@ -12,6 +12,7 @@
 </template>
 <script>
     var golos = require('golos-js');
+    //import Store from './../store';
 
     var verifyUser = (username, password, contex) => {
 
@@ -28,7 +29,9 @@
                         active: keys.active
                     }
                     localStorage.permissions = JSON.stringify(permissions);
-                    contex.$emit('success', 1);
+                    contex.$store.commit('permissions', permissions);
+                    contex.$store.commit('state', 1);
+                    //contex.$emit('success', 1);
                 } else {
                     alert("Неверно имя пользователя либо пароль");
                 }
