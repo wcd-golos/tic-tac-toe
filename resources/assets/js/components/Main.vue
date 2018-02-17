@@ -1,8 +1,7 @@
 <template>
     <div>
         <div v-if="agreement">
-            <game></game>
-            <!--<agreement v-on:agree="agree"></agreement>-->
+            <agreement v-on:agree="agree"></agreement>
         </div>
         <div v-else-if="game">
             <game></game>
