@@ -3,7 +3,7 @@
         <div v-if="login">
             <login></login>
         </div>
-        <div v-if="agreement">
+        <div v-else-if="agreement">
             <game></game>
             <!--<agreement v-on:agree="agree"></agreement>-->
         </div>
