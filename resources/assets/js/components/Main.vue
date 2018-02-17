@@ -3,11 +3,11 @@
         <div v-if="login" class="fullheight">
             <login v-on:success="logined"></login>
         </div>
-        <div v-else-if="agreement">
+        <div v-else-if="agreement" class="fullheight">
             <!--<game></game>-->
             <agreement v-on:agree="agree"></agreement>
         </div>
-        <div v-else-if="game">
+        <div v-else-if="game" class="fullheight">
             <game v-bind:game="gameWrapper"></game>
         </div>
     </div>
