@@ -37,10 +37,11 @@ function comment(user, parentAuthor, parentId, title, tags, cb) {
 function Game( id, author ) {
     this.id = id;
     this.author = author;
-
-    this.moves = [];
     this.opponent = null;
     this.isMy = true;
+    this.myMove = true;
+
+    this.moves = [];
     this.state = Game.STATUS_NEW;
 
     this.matrix = [
@@ -193,7 +194,7 @@ Game.prototype.persist = function () {
 Game.prototype.move = function( user, x, y, cb ) {
     console.log('move');
 
-    comment(user, game.author, game.id, user.login, ['MOVE'], function(err, result, id) {
+    comment(user, game.author, game.id, JSON.stringify({x: x, y: y}), ['MOVE'], function(err, result, id) {
         console.log('MOVE', err, result);
         cb(err, result);
     });
@@ -227,7 +228,9 @@ Game.getGame = function( author, gameId, cb ) {
             return cb(null, null);
         }
 
-        var game = new Game(gameId, author);
+        var game = new Game(gameId, result.author);
+        game.state = Game.STATUS_NEW;
+        game.isMy = result.author == author;
 
         golosJs.api.getContentReplies(author, gameId, function(err, result) {
             console.log('getContentReplies');
@@ -236,19 +239,34 @@ Game.getGame = function( author, gameId, cb ) {
                 return cb(err);
             }
 
-            console.log('comments', result.length);
+            if (result.length) {
+                game.state = Game.STATUS_PLAYING;
+            }
+
             result.forEach(comment => {
                 try {
                     var meta = JSON.parse(comment.jsonMetadata);
                     var tags = meta.tags || [];
-                    var body = comment.body;
+                    var title = comment.title;
+                    var moveAuthor = comment.author;
 
-                    if (meta.indexOf('OPPONENT')) {
-                        game.opponent = body;
+                    if (tags.indexOf('OPPONENT')) {
+                        game.opponent = title;
                     } else if (meta.indexOf('MOVE')) {
+                        try {
+                            var move = JSON.parse(title);
+                            game.moves.push({
+                                author: author == moveAuthor,
+                                x: move.x,
+                                y: move.y
+                            });
+                        } catch (e) {
 
-                    } else if (meta.indexOf('WIN')) {
+                        }
+                    } else if (tags.indexOf('WIN')) {
 
+                    } else if (tags.indexOf('DONE')) {
+                        game.state = Game.STATUS_DONE;
                     }
 
                 } catch (e) {
@@ -262,9 +280,11 @@ Game.getGame = function( author, gameId, cb ) {
 };
 
 Game.createGame = function ( user, cb ) {
+    console.log('createGame');
+
     var title = `Игра создана ${ user.login }`;
 
-    comment(user.login, '', user.key, Game.PARENT_PERMLINK, title, ['test'], function(err, result, gameId) {
+    comment(user, '',  Game.PARENT_PERMLINK, title, ['test'], function(err, result, gameId) {
         console.log('CREATE post/comment', err, result);
 
         if (err) {
