@@ -17,21 +17,18 @@
 
         //проверяем наличие аккаунта
         golos.api.getAccounts([username], function(err, result) {
-            //console.log('getAccounts', result);
             let postingPubkey = result[0].posting.key_auths[0][0];
             if (result.length) {
-                let roles = ['owner', 'active', 'posting', 'memo'];
+                let roles = ['active', 'posting'];
                 let keys = golos.auth.getPrivateKeys(username, password, roles);
-                //console.log('postingPubkey', postingPubkey);
-                //console.log('keys', keys);
                 if (postingPubkey === keys.postingPubkey) {
-                    //console.log();
                     let permissions =  {
                         user: username,
                         posting: keys.posting,
                         active: keys.active
                     }
                     localStorage.permissions = JSON.stringify(permissions);
+                    //todo redirect
                 } else {
                     console.log("Неверно имя пользователя либо пароль");
                 }
@@ -39,33 +36,6 @@
                 alert('В системе нет такого пользователя');
             }
         });
-
-        //Проверяем наличие акаунта
-        //Делаем запрос на получение акаутна по введенному логину
-        // golosJs.api.getAccounts([username], function(err, result) {
-        //     //Проверяем есть ли возвращенные значения
-        //     if (result.length) {
-        //         //Берем публичный ключ
-        //         var pubWif = result[0].posting.key_auths[0][0];
-        //         //Проверяем введенный пользователем приватный ключ на валидность
-        //         if (golosJs.auth.isWif(privWif)) {
-        //             //Проверяем соответствие приватного и публичного ключей
-        //             if (golosJs.auth.wifIsValid(privWif, pubWif)) {
-        //                 //Привязываем данные Голоса к аккаунту пользователя
-        //                 console.log("Success!");
-        //             } else {
-        //                 //Возвращаем сообщение об ошибке "Не соответствие приватного и публичного ключей"
-        //                 console.log('The private key does not match the public key');
-        //             }
-        //         } else {
-        //             //Возвращаем сообщение об ошибке "Указанный приватный ключ не является валидным"
-        //             console.log('The private key specified is not valid');
-        //         }
-        //     } else {
-        //         //возврат ошибки "Учетная запись пользователя не определена"
-        //         console.log('user account is not defined')
-        //     }
-        // });
     };
 
     export default {
