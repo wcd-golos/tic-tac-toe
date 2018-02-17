@@ -125,7 +125,7 @@ Game.getGame = function( author, gameId, cb ) {
                     var title = comment.title;
                     var moveAuthor = comment.author;
 
-                    if (meta.indexOf('OPPONENT')) {
+                    if (tags.indexOf('OPPONENT')) {
                         game.opponent = title;
                     } else if (meta.indexOf('MOVE')) {
                         try {
@@ -138,9 +138,9 @@ Game.getGame = function( author, gameId, cb ) {
                         } catch (e) {
 
                         }
-                    } else if (meta.indexOf('WIN')) {
+                    } else if (tags.indexOf('WIN')) {
 
-                    } else if (meta.indexOf('DONE')) {
+                    } else if (tags.indexOf('DONE')) {
                         game.state = Game.STATUS_DONE;
                     }
 
