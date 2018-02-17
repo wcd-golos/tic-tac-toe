@@ -37,10 +37,11 @@ function comment(user, parentAuthor, parentId, title, tags, cb) {
 function Game( id, author ) {
     this.id = id;
     this.author = author;
-
-    this.moves = [];
     this.opponent = null;
     this.isMy = true;
+    this.myMove = true;
+
+    this.moves = [];
     this.state = Game.STATUS_NEW;
 
     this.matrix = [
@@ -68,7 +69,7 @@ Game.prototype.persist = function () {
 Game.prototype.move = function( user, x, y, cb ) {
     console.log('move');
 
-    comment(user, game.author, game.id, user.login, ['MOVE'], function(err, result, id) {
+    comment(user, game.author, game.id, JSON.stringify({x: x, y: y}), ['MOVE'], function(err, result, id) {
         console.log('MOVE', err, result);
         cb(err, result);
     });
@@ -102,8 +103,9 @@ Game.getGame = function( author, gameId, cb ) {
             return cb(null, null);
         }
 
-        var game = new Game(gameId, author);
+        var game = new Game(gameId, result.author);
         game.state = Game.STATUS_NEW;
+        game.isMy = result.author == author;
 
         golosJs.api.getContentReplies(author, gameId, function(err, result) {
             console.log('getContentReplies');
@@ -120,12 +122,22 @@ Game.getGame = function( author, gameId, cb ) {
                 try {
                     var meta = JSON.parse(comment.jsonMetadata);
                     var tags = meta.tags || [];
-                    var body = comment.body;
+                    var title = comment.title;
+                    var moveAuthor = comment.author;
 
                     if (meta.indexOf('OPPONENT')) {
-                        game.opponent = body;
+                        game.opponent = title;
                     } else if (meta.indexOf('MOVE')) {
+                        try {
+                            var move = JSON.parse(title);
+                            game.moves.push({
+                                author: author == moveAuthor,
+                                x: move.x,
+                                y: move.y
+                            });
+                        } catch (e) {
 
+                        }
                     } else if (meta.indexOf('WIN')) {
 
                     } else if (meta.indexOf('DONE')) {
