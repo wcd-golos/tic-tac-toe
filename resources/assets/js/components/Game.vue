@@ -13,6 +13,10 @@
 <script>
     var golosJs = require('golos-js');
     var count= 3;
+    var GAME_WIN = 1;
+    var GAME_FAIL = 0;
+    var GAME_IN_PROGRESS = 2;
+    var GAME_DRAW = 3;
 
     //верификация пользователя
     var verifyUser = () => {
@@ -145,32 +149,61 @@
         }
 
         if(res === true) {
-            return 1;
+            return GAME_WIN;
         } else if(inProgress) {
-            return 2;
+            return GAME_IN_PROGRESS;
         } else {
-            return 0;
+            return GAME_FAIL;
         }
     };
 
     let checkLanes = (symb) => {
-        let cols = 0, rows = 0;
+        let cols = 0, rows = 0, res = false;
+        let inProgress= false, isInProgressRight = false, isInProgressLeft = false;
         for (let col=0; col < count; col++) {
             cols = true;
             rows = true;
             for (let row=0; row < count; row++) {
                 cols &= (map[col][row] == symb);
                 rows &= (map[row][col] == symb);
+
+                isInProgressRight = (map[col][row] == 0);
+                isInProgressLeft = (map[row][col] == 0);
             }
 
-            if (cols || rows) return true;
+            if (cols || rows) return GAME_WIN;
+        }
+        //если нет выйграша то проверка на незаконченную игру
+        if(!res) {
+            if (isInProgressRight || isInProgressLeft) inProgress = true;
         }
 
-        return false;
+        if(inProgress) {
+            return GAME_IN_PROGRESS;
+        } else {
+            return GAME_FAIL;
+        }
     };
 
+    let isGameEnded = () => {
+        for (let col=0; col < count; col++) {
+            for (let row=0; row < count; row++) {
+                if(map[col][row] == 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     let checkWin = (sym) => {
-        return checkLanes(sym) || checkDiagonal(sym);
+        if(checkLanes(sym) == GAME_WIN || checkDiagonal(sym) == GAME_WIN) {
+            return GAME_WIN;
+        } else if(checkLanes(sym) == GAME_IN_PROGRESS || checkDiagonal(sym) == GAME_IN_PROGRESS) {
+            return GAME_IN_PROGRESS;
+        } else if (isGameEnded()) {
+            return GAME_DRAW;
+        }
     };
 
     export default {
@@ -194,18 +227,20 @@
                 } else {
                     Vue.set(map[i], j, 1);
                     let res = checkWin(1);
-                    if(res) {
+                    if(res == GAME_WIN) {
                         alert('!!!Вы выйграли!!!');
+                    } else if(res == GAME_DRAW) {
+                        alert('Ничья!');
                     }
                 }
             },
             onInit() {
-//                var timer = setInterval(function() {
-//                    Vue.set(map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), Math.floor(Math.random() * 3));
-//                    let res = checkWin(1);
-//                    if(res) clearInterval(timer);
-//                    console.log('Результат: ' + (res ? 'win' : 'fail'));
-//                }, 100);
+                var timer = setInterval(function() {
+                    Vue.set(map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), Math.floor(Math.random() * 3));
+                    let res = checkWin(1);
+                    if(res == GAME_WIN) clearInterval(timer);
+                    console.log('Результат: ' + (res));
+                }, 100);
 
             }
         }
