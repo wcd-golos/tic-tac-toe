@@ -3,17 +3,17 @@
         <div v-if="agreement">
             <agreement v-on:agree="agree"></agreement>
         </div>
-        <div v-else-if="findGame">
-            <game></game>
-            <!--<find-game></find-game>-->
-        </div>
-        <div v-else>
+        <div v-else-if="game">
             <game></game>
         </div>
     </div>
 </template>
 
 <script>
+
+    var STATUS_NEW = 0;
+    var STATUS_PLAYING = 1;
+    var STATUS_DONE = 2;
 
     var golosJs = require('golos-js');
 
@@ -50,11 +50,41 @@
         });
     };
 
+    var getActiveGame  = function () {
+        return localStorage.currentGame || 0;
+    };
+
+    var getCurrentState = function (cb) {
+        var activeGame = getActiveGame();
+        if (!activeGame.id) {
+            return cb(STATUS_NEW);
+        }
+
+        Game.getGame(activeGame.author, activeGame.id, function (err, game) {
+            if (err) {
+                return cb(STATUS_NEW);
+            }
+
+            if (game.isDone) {
+                return cb(STATUS_DONE);
+            }
+
+            return cb(STATUS_PLAYING, game);
+        });
+    }
+
     export default {
-        data: () => {
+        created: function() {
+            getCurrentState((state) => {
+                this.agreement = state != STATUS_PLAYING;
+                this.findGame = state == STATUS_PLAYING;
+            });
+        },
+
+        data: function() {
             return {
                 agreement: true,
-                findGame: false
+                game: false
             }
         },
         methods: {
@@ -66,7 +96,7 @@
                 console.log('Agree clicked');
                 this.agreement = false;
                 this.findGame = true;
-            },
+            }
         }
     };
 </script>
