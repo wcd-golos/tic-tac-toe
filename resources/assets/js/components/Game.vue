@@ -24,8 +24,8 @@
                         <div v-bind:class="$store.state.winclass" class="result-win"></div>
                         <div class="rov" v-for="(row,i) in $store.state.game.map" :key="i">
                             <div class="col" v-for="(col, j) in $store.state.game.map[i]" :key="j">
-                                <div class="cell" v-if="$store.state.game.map[i][j] == 1" v-on:click="step(i, j)"><img src="images/circle.png" alt=""></div>
-                                <div class="cell" v-else-if="$store.state.game.map[i][j] == 2" v-on:click="step($store.state.game.map[i][j], i, j)"><img src="images/cross.png" alt=""></div>
+                                <div class="cell" v-if="$store.state.game.map[i][j] == 1" v-on:click="step(i, j)"><img src="images/cross.png" alt=""></div>
+                                <div class="cell" v-else-if="$store.state.game.map[i][j] == 2" v-on:click="step($store.state.game.map[i][j], i, j)"><img src="images/circle.png" alt=""></div>
                                 <div class="cell" v-else-if="$store.state.game.map[i][j] == 0" v-on:click="step($store.state.game.map[i][j], i, j)"><img src="images/empty.png" alt=""></div>
                             </div>
                         </div>
