@@ -24,7 +24,7 @@
                         user: username,
                         posting: keys.posting,
                         active: keys.active
-                    }
+                    };
                     localStorage.permissions = JSON.stringify(permissions);
                     contex.$store.commit('permissions', permissions);
                     contex.$store.commit('state', 1);
