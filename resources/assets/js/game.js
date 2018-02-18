@@ -87,7 +87,7 @@ function Game(permLink, author) {
     ];
 };
 
-Game.PARENT_PERMLINK = 'tic-tac-toe-games-27';
+Game.PARENT_PERMLINK = 'tic-tac-toe-games-28';
 
 Game.STATUS_NEW = 0;
 Game.STATUS_PLAYING = 1;
@@ -219,7 +219,7 @@ Game.getGame = function(author, user, permLink, cb ) {
                          });
 
                          var sym = 1;
-                         if (game.author == user) {
+                         if (commentAuthor == user) {
                              sym = game.isMy ? 1 : 2;
                          } else {
                              sym = game.isMy ? 2 : 1;
@@ -265,7 +265,7 @@ Game.sync = function (game, user, cb) {
                     });
 
                     var sym = 1;
-                    if (game.author == user) {
+                    if (commentAuthor == user) {
                         sym = game.isMy ? 1 : 2;
                     } else {
                         sym = game.isMy ? 2 : 1;
