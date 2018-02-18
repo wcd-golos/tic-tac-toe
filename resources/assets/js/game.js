@@ -62,14 +62,17 @@ function comment(user, parentAuthor, parentPermlink, title, info, cb) {
 function Game(permLink, author) {
     this.permLink = permLink;
     this.author = author;
-    this.opponent = null;
+    this.opponent = 'Petya';
     this.isMy = true;
     this.myMove = true;
 
     this.moves = [];
     this.state = Game.STATUS_NEW;
 
-    this.matrix = [
+    //0 => null
+    //1 => X
+    //2 => O
+    this.map = [
         [0, 0, 0],
         [0, 0, 0],
         [0, 0, 0]
