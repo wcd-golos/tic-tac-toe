@@ -48,17 +48,7 @@
                 if (this.loader) {
                     return;
                 }
-<<<<<<< HEAD
-                this.loader= true;
-                this.$emit('agree', 1);
-                //проверям есть ли активне посты
-                //если нет создаем нувую игру
-                //console.log('store', this.$store.state.user);
-                // Game.play(this.$store.state.posting, this.$store.state.user, (err, result) => {
-                //     //conole.log('err', err);
-                //     //console.log('res'. result);
-                // });
-=======
+
                 this.loader = true;
                 //console.log('store', this.$store.state.user);
                 //this.$store.commit('state', 2);
@@ -82,7 +72,6 @@
                         }
                     }
                 });
->>>>>>> 49bec6c0c6d8df4366e2f0d7ca9b0b984221d261
             },
             startReady(permLink) {
                 let websocket = new WebSocket("wss://ws.golos.io");
