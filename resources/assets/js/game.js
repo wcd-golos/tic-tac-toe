@@ -226,6 +226,13 @@ Game.prototype.checkEnd = function () {
 Game.prototype.move = function(user, x, y, cb) {
     console.log('move');
 
+    if (this.map[x][y]) {
+        // illegal move
+        return cb('Вы не можете сделать этот ход');
+    }
+
+    this.map[x][y] = user.login == this.author ? 2 : 1;
+
     var data = {
         app: Game.PARENT_PERMLINK,
         type: "MOVE",
@@ -307,6 +314,7 @@ Game.getGame = function(author, permLink, cb ) {
                             y:  message.y
                          });
 
+                         game.map[message.x][message.y] = game.author == author ? 2 : 1;
                          game.myMove = commentAuthor != author;
                      } else if ('DONE' == message.type) {
                         game.state = Game.STATUS_DONE;
