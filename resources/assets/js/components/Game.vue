@@ -12,11 +12,11 @@
             </div>
             <div class="sect">
                 <div class="field-container">
-                    <h3 v-if="myStep">
+                    <h3 v-if="$store.state.game.myMove">
                         <span v-if="time != 0">Ваш ход через {{ time }} сек.</span>
                         <span v-else>Ваш ход!</span>
                     </h3>
-                    <h3 v-if="!myStep">Ход оппонента</h3>
+                    <h3 v-if="!$store.state.game.myMove">Ход оппонента</h3>
 
                     <div class="field">
                         <div v-bind:class="$store.state.winclass" class="result-win"></div>
@@ -156,7 +156,6 @@
                 body: '',
                 myName: '',
                 hisName: 'Петя',
-                myStep: true,
                 time: 20,
             }
         },
@@ -195,14 +194,14 @@
                 }
             },
             onInit() {
-//                var timer = setInterval(() => {
-//                    Vue.set(map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), Math.floor(Math.random() * 3));
-//                    let res = checkWin(1);
-//                    this.$store.commit('winclass', res[1]);
-//                    if(res == undefined) clearInterval(timer);
-//                    if(res[0] == GAME_WIN) clearInterval(timer);
-//                    console.log('Результат: ' + (res[0]));
-//                }, 50);
+                var timer = setInterval(() => {
+                    Vue.set(map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), Math.floor(Math.random() * 3));
+                    let res = checkWin(1);
+                    this.$store.commit('winclass', res[1]);
+                    if(res == undefined) clearInterval(timer);
+                    if(res[0] == GAME_WIN) clearInterval(timer);
+                    console.log('Результат: ' + (res[0]));
+                }, 50);
 
             },
             getComments(permLink) {
