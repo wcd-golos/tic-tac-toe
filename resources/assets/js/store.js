@@ -9,6 +9,7 @@ const store = new Vuex.Store({
         posting: '',
         active: '',
         state: 0,
+        win: false,
         game_golos_rate: 0.010,
         game_gbg_rate: 0.000,
         game_commision: 0.001,
