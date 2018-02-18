@@ -221,6 +221,36 @@
 //                    console.log('Результат: ' + (res[0]));
 //                }, 50);
 
+            },
+            getComments(permLink) {
+                let websocket = new WebSocket("wss://ws.golos.io");
+                websocket.onopen = (event) => {
+                    websocket.send(JSON.stringify({
+                        id: 1,
+                        method: 'call',
+                        params: ["database_api", "set_block_applied_callback", [0]]
+                    }));
+
+                    websocket.onmessage = (raw) => {
+                        var data = JSON.parse(raw.data);
+                        if (data.method === 'notice' && data.params) {
+                        var hex = data.params[1][0].previous.slice(0,8);
+                        var height = parseInt(hex, 16);
+
+                        websocket.send(JSON.stringify({
+                            id: 2,
+                            method: 'call',
+                            params: ['database_api', 'get_ops_in_block', [height, "false"]]
+                        }));
+
+                        } else if (data.id === 2) {
+                            let result = this.blockFilter(data.result, permLink);
+                            if (start) {
+                                console.log('result', data.result);
+                            }
+                        }
+                    }
+                }
             }
         }
     };
