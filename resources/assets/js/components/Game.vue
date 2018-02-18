@@ -46,13 +46,7 @@
     export default {
         data: () => {
             return {
-                map: map,
-                body: '',
-                myName: '',
-                hisName: 'Петя',
-                myStep: true,
                 time: 20
-                //game: null
             }
         },
         created: function() {
