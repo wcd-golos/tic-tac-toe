@@ -24,6 +24,7 @@
         created: function() {
             let permStorage = localStorage['permissions'];
             if (permStorage != undefined) {
+                console.log(permStorage);
                 let permissions = JSON.parse(permStorage);
                 //this.login = false;
                 //this.agreement = true;
@@ -51,7 +52,7 @@
             this.getCurrentState((state, game) => {
                 //this.agreement = state != STATUS_PLAYING;
                 //this.game = state == STATUS_PLAYING;
-                this.$store.commit('state', 1);
+//                this.$store.commit('state', 0);
                 //this.$store.commit('state', 2);
                 console.log(game);
                 this.$store.commit('game', game);
