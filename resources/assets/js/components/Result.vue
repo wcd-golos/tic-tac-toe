@@ -1,5 +1,5 @@
 <template>
-    <div v-if="win" class="fullheight">
+    <div v-if="$store.state.win" class="fullheight">
         <div class="gradient">
             <div class="win-page">
                 <img src="images/win.png" alt="">
