@@ -87,7 +87,7 @@ function Game(permLink, author) {
     ];
 };
 
-Game.PARENT_PERMLINK = 'tic-tac-toe-games-41';
+Game.PARENT_PERMLINK = 'tic-tac-toe-games-44';
 
 Game.STATUS_NEW = 0;
 Game.STATUS_PLAYING = 1;
@@ -151,10 +151,10 @@ Game.prototype.move = function(user, x, y, cb) {
         if (result[0] == Game.RESULT_IN_PROGRESS) {
             console.log('in progress');
         } else {
-            this.className = result[1];
+            game.className = result[1];
             setTimeout(()=>{
-                window,store.state.state = 2;
-            })
+                window.store.commit('state', 3);
+            }, 1000);
             var data = {
                 app: Game.PARENT_PERMLINK,
                 type: "DONE",
