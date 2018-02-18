@@ -44,10 +44,10 @@
                     return;
                 }
                 this.loader= true;
-                //this.$emit('agree', 1);
+                this.$emit('agree', 1);
                 //проверям есть ли активне посты
                 //если нет создаем нувую игру
-                console.log('store', this.$store.state.user);
+                //console.log('store', this.$store.state.user);
                 // Game.play(this.$store.state.posting, this.$store.state.user, (err, result) => {
                 //     //conole.log('err', err);
                 //     //console.log('res'. result);

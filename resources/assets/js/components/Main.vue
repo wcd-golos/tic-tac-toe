@@ -60,6 +60,7 @@
             getCurrentState((state, game) => {
                 //this.agreement = state != STATUS_PLAYING;
                 //this.game = state == STATUS_PLAYING;
+                this.$store.commit('state', 2);
                 this.gameWrapper = game;
             });
         },
@@ -72,10 +73,6 @@
         },
 
         methods: {
-//            verifyUser () {
-//                verifyUser(this.username, this.wif);
-//            },
-
             agree: function(id) {
                 Game.play(this.user, (err, game) => {
                     if (err) {
@@ -83,6 +80,7 @@
                         return;
                     }
 
+                    game.persist();
                     this.$store.commit('state', 2);
                     this.gameWrapper = game;
                 });
