@@ -46,12 +46,21 @@
     export default {
         data: () => {
             return {
-                time: 20,
+                time: 20
             }
         },
         created: function() {
             this.onInit();
             this.waitForStep();
+            console.log('this.game', this.$store.state.game);
+
+            setInterval(() => {
+                Game.sync(this.$store.state.game, JSON.parse(localStorage.permissions).user, function () {
+                    console.log('sync');
+                });
+            }, 1000);
+
+            //this.getComments(this.$store.state.game.permLink);
         },
         methods: {
             verifyUser () {
@@ -62,17 +71,21 @@
                 this.time = 20;
                 var timer = setInterval(() => {
                     this.time--;
-                    console.log(this.time);
                     if(this.time == 0) clearInterval(timer);
                 }, 1000);
             },
 
             step(valueInCell, i, j) {
+                if(!this.$store.state.game.myMove) {
+                    console.log('Ход оппонента');
+                    return;
+                }
                 let permissions = JSON.parse(localStorage.permissions);
                 this.$store.state.game.move({
                     login: permissions.user,
                     key: permissions.posting
                 }, i, j, (err, res) => {
+                    console.log('MOVE: '+this.$store.state.game.myMove);
                     if(err) {
                         console.log(err);
                         return;
@@ -120,8 +133,10 @@
                         }));
 
                         } else if (data.id === 2) {
-                            let result = this.blockFilter(data.result, permLink);
-                            if (start) {
+                            console.log('data.result', data.result);
+                            console.log('permLink', permLink);
+                            let result = Game.blockFilter(data.result, permLink);
+                            if (result) {
                                 console.log('result', data.result);
                             }
                         }

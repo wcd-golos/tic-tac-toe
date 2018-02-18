@@ -132,7 +132,10 @@
                             // отправление сообщения о транзакции
 
                             console.log('joined to game');
+                            this.$store.commit('state', 2);
                         }
+
+                        this.$store.commit('game', result);
                     } else {
                         console.log('err', err);
                         if (err.payload.id == 11) {
@@ -143,7 +146,7 @@
                 });
             },
             startReady(permLink) {
-                let websocket = new WebSocket("wss://ws.golos.io");
+                let websocket = new WebSocket("wss://api.golos.cf");
                 websocket.onopen = (event) => {
                     websocket.send(JSON.stringify({
                         id: 1,
@@ -169,6 +172,7 @@
                             if (start) {
                                 //go to game
                                 console.log('go to game');
+                                this.$store.commit('state', 2);
                             }
                         }
                     }

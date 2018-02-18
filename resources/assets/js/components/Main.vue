@@ -51,6 +51,7 @@
             this.getCurrentState((state, game) => {
                 //this.agreement = state != STATUS_PLAYING;
                 //this.game = state == STATUS_PLAYING;
+                this.$store.commit('state', 1);
                 //this.$store.commit('state', 2);
                 console.log(game);
                 this.$store.commit('game', game);
@@ -87,7 +88,10 @@
                 }
 
                 Game.getGame(activeGame.author, activeGame.id, function (err, game) {
+//                    this.$store.commit('game', game);
+                    console.log('MAIN: ', err, game);
                     if (err || game == null) {
+                        console.log(err);
                         return cb(Game.STATUS_NEW);
                     }
 

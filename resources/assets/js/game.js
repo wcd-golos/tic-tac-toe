@@ -46,7 +46,7 @@ function comment(user, parentAuthor, parentPermlink, title, info, cb) {
         }
 
         var permLink = Game.generateId();
-        var body = JSON.stringify({creator: username});
+        var body = JSON.stringify({creator: user.login});
 
         var jsonMetadata = {
             info: info
@@ -62,12 +62,14 @@ function comment(user, parentAuthor, parentPermlink, title, info, cb) {
 function Game(permLink, author) {
     this.permLink = permLink;
     this.author = author;
-    this.opponent = 'Petya';
+    this.opponent = '';
     this.isMy = true;
     this.myMove = true;
 
     this.moves = [];
     this.state = Game.STATUS_NEW;
+
+    this.className = '';
 
     //0 => null
     //1 => X
@@ -79,7 +81,7 @@ function Game(permLink, author) {
     ];
 };
 
-Game.PARENT_PERMLINK = 'tic-tac-toe-game-test22';
+Game.PARENT_PERMLINK = 'tic-tac-toe-games-3';
 
 
 Game.STATUS_NEW = 0;
@@ -89,6 +91,8 @@ Game.STATUS_DONE = 2;
 Game.RESULT_WIN = 1;
 Game.RESULT_DRAW = 3;
 Game.RESULT_IN_PROGRESS = 2;
+
+Game.SIZE = 3;
 
 Game.prototype.persist = function () {
     var game = {
@@ -197,7 +201,7 @@ Game.getGame = function(author, permLink, cb ) {
 
             comments.forEach(comment => {
                 try {
-                    var meta = JSON.parse(comment.jsonMetadata);
+                    var meta = JSON.parse(comment.json_metadata);
                     var message = meta.info || {};
                     var commentAuthor = comment.author;
 
@@ -225,14 +229,52 @@ Game.getGame = function(author, permLink, cb ) {
     });
 };
 
+Game.sync = function (game, user, cb) {
+    golosJs.api.getContentReplies(game.author, game.permLink, (err, comments) => {
+
+        if (err) {
+            return cb(err);
+        }
+
+        game.state = comments.length > 0 ? Game.STATUS_PLAYING : Game.STATUS_NEW;
+
+        comments.forEach(comment => {
+            try {
+                var meta = JSON.parse(comment.json_metadata);
+                var message = meta.info || {};
+                var commentAuthor = comment.author;
+
+                if ('JOIN' == message.type) {
+                    game.opponent = message.user;
+                } else if ('MOVE' == message.type) {
+                    game.moves.push({
+                        user: commentAuthor,
+                        x:  message.x,
+                        y:  message.y
+                    });
+
+                    game.map[message.x][message.y] = game.author == user.author ? 2 : 1;
+                    game.myMove = commentAuthor != user.author;
+                } else if ('DONE' == message.type) {
+                    game.state = Game.STATUS_DONE;
+                }
+            } catch (e) {
+
+            }
+        });
+
+        return cb(null, game);
+    });
+};
+
 Game.createGame = function (user, cb) {
 
-    var title = `Игра создана ${ username }`;
+    var title = `Игра создана ${ user.login }`;
 
     var data = {
         app: Game.PARENT_PERMLINK,
         type: 'created',
-        creator: username
+        creator: user.login
     };
 
     comment(user, '', Game.PARENT_PERMLINK, title, data, function(err, result, permLink) {
@@ -240,7 +282,7 @@ Game.createGame = function (user, cb) {
             return cb(err);
         }
 
-        var game = new Game(permLink, username);
+        var game = new Game(permLink, user.login);
         cb(null, game);
     });
 };
@@ -257,6 +299,18 @@ Game.getLastGame = function (cb) {
     golosJs.api.getDiscussionsByCreated(query, (err, result) => {
 
         if (err) {
+            return cb(err);
+        }
+
+        if (!result.length) {
+            return cb(null, null);
+        }
+
+        var game = result[0];
+
+        Game.getGame(game.author, game.permlink, cb);
+
+        /*if (err) {
             return cb(err);
         }
 
@@ -281,8 +335,10 @@ Game.getLastGame = function (cb) {
 
                     });
                 }
-            } else { cb(err) }
-        });
+            } else {
+                cb(err);
+            }
+        });*/
     });
 };
 
@@ -320,7 +376,7 @@ Game.prototype.join = function(user, cb) {
     var data = {
         app: Game.PARENT_PERMLINK,
         type: "JOIN",
-        user: username
+        user: user.login
     };
 
     comment(user, this.author, this.permLink, '', data, function(err, result, permLink) {
@@ -489,12 +545,12 @@ Game.prototype.checkDiagonal = function(symb) {
     var winClass = '';
     toright = true;
     toleft = true;
-    for (let i=0; i < count; i++) {
+    for (let i=0; i < Game.SIZE; i++) {
         toright &= (this.map[i][i] == symb);
-        toleft &= (this.map[count - i - 1][i] == symb);
+        toleft &= (this.map[Game.SIZE - i - 1][i] == symb);
 
         isInProgressRight = (this.map[i][i] == 0);
-        isInProgressLeft = (this.map[count - i - 1][i] == 0);
+        isInProgressLeft = (this.map[Game.SIZE - i - 1][i] == 0);
     }
 
     if (toright) winClass = 'win-00-22';
@@ -517,10 +573,10 @@ Game.prototype.checkLines = function(symb) {
     var cols = 0, rows = 0, res = false;
     var inProgress= false, isInProgressRight = false, isInProgressLeft = false;
     var winClass = '';
-    for (let col=0; col < count; col++) {
+    for (let col=0; col < Game.SIZE; col++) {
         cols = true;
         rows = true;
-        for (let row=0; row < count; row++) {
+        for (let row=0; row < Game.SIZE; row++) {
             cols &= (this.map[col][row] == symb);
             rows &= (this.map[row][col] == symb);
 
@@ -541,8 +597,8 @@ Game.prototype.checkLines = function(symb) {
 };
 
 Game.prototype.isGameEnded = function() {
-    for (let col=0; col < count; col++) {
-        for (let row=0; row < count; row++) {
+    for (let col=0; col < Game.SIZE; col++) {
+        for (let row=0; row < Game.SIZE; row++) {
             if(this.map[col][row] == 0) {
                 return false;
             }
