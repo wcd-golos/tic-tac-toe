@@ -44,6 +44,10 @@
                 };
 
                 var agetsData = {
+                    user1: 'avehogan',
+                    user1_pass: '5JHUWcrGkgbgRjki8VpByyWZowrRbCcmKs3MJywtxKUtGPoRvTi',
+                    user2: 'a-borisov',
+                    user2_pass: '5KScas3m9WmX5pbK7vf2XAK7R1GehTySxb4x5FZHMGC8RgC2vLK',
                     get_golos_terms: 'Победить в игре tic-tac-toe', // флаг выйгыша
                     game_golos_rate: "0.010 GOLOS", // количество переводимых голосов
                     game_gbg_rate: "0.000 GBG", // количество переводимых золотых голосов

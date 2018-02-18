@@ -273,6 +273,22 @@ Game.getGame = function(author, user, permLink, cb ) {
                                     }
                                 );
 
+                                //подтверждение моей транзакции оппонентом
+                                Game.approveTransaction(
+                                    this.$store.state.user2,
+                                    this.$store.state.user2_pass,
+                                    game.author,
+                                    game.opponent,
+                                    agentsData.agent,
+                                    escrow_id,
+                                    true,
+                                    function(err, result) {
+                                        if (err) {
+                                            alert('Не удалось подтвердить транзакцию');
+                                        }
+                                    }
+                                );
+
                             } else {
                                 alert('Faild to create transaction');
                             }

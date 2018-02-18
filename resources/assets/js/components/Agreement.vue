@@ -146,6 +146,22 @@
                                             }
                                         );
 
+                                        //подтверждение моей транзакции создателем
+                                        Game.approveTransaction(
+                                            this.$store.state.user,
+                                            this.$store.state.user1_pass,
+                                            this.$store.state.user1,
+                                            game_author,
+                                            this.$store.state.user1,
+                                            escrow_id,
+                                            true,
+                                            function(err, result) {
+                                                if (err) {
+                                                    alert('Не удалось подтвердить транзакцию');
+                                                }
+                                            }
+                                        );
+
                                     } else {
                                         alert('Faild to create transaction');
                                     }
