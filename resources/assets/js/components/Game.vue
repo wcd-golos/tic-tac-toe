@@ -28,13 +28,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!--<div class="timer">-->
-                        <!--<p v-if="myStep">-->
-                            <!--<span v-if="time != 0">Ваш ход через {{ time }} сек.</span>-->
-                            <!--<span v-else>Ваш ход!</span>-->
-                        <!--</p>-->
-                    <!--</div>-->
                 </div>
             </div>
             <div class="sect">
@@ -45,19 +38,9 @@
             </div>
         </div>
     </section>
-    <!--<div>-->
-        <!--<div class="str" v-for="(row,i) in map" :key="i">-->
-            <!--<div class="col" v-for="(col, j) in map[i]" :key="j">-->
-                <!--<div v-if="map[i][j] == 1" v-on:click="step(i, j)">O</div>-->
-                <!--<div v-else-if="map[i][j] == 2" v-on:click="step(map[i][j], i, j)">X</div>-->
-                <!--<div v-if-else="map[i][j] == 0" v-on:click="step(map[i][j], i, j)">&nbsp;</div>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
 </template>
 
 <script>
-    var golosJs = require('golos-js');
     var count= 3;
     var GAME_WIN = 1;
     var GAME_FAIL = 0;

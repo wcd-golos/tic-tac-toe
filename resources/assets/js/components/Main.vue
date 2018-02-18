@@ -32,7 +32,7 @@
                 this.$store.commit('state', 1);
                 this.$store.commit('permissions', permissions);
                 //console.log('user', this.$store.state.user)
-                this.$store.commit('state', 1);
+
                 //console.log('user', this.$store.state.user)
                 // Game.play(permissions.posting, permissions.user, function(err, game) {
                 //     if (err) {
@@ -47,14 +47,15 @@
                 //this.login = false;
                 //this.agreement = true;
             } else {
-
+                this.$store.commit('state', 0);
             }
 
             this.getCurrentState((state, game) => {
                 //this.agreement = state != STATUS_PLAYING;
                 //this.game = state == STATUS_PLAYING;
                 this.$store.commit('state', 2);
-                this.$store.commit('game', game)
+                this.$store.commit('game', game);
+//                this.$store.commit('state', 2);
                 this.gameWrapper = game;
             });
         },
