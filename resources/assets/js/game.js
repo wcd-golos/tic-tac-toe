@@ -123,7 +123,7 @@ Game.prototype.move = function(user, x, y, cb) {
 
     var self = this;
 
-    comment(user, game.author, game.id, 'move', data, function(err, result, id) {
+    comment(user, this.author, this.permLink, 'move', data, function(err, result, id) {
         console.log('MOVE', err, result);
 
         self.moves.push({
