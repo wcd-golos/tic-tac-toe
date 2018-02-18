@@ -81,7 +81,7 @@ function Game(permLink, author) {
     ];
 };
 
-Game.PARENT_PERMLINK = 'tic-tac-toe-games-5';
+Game.PARENT_PERMLINK = 'tic-tac-toe-games-9';
 
 
 Game.STATUS_NEW = 0;
@@ -181,13 +181,11 @@ Game.getGame = function(author, permLink, cb ) {
         if (err) {
             return cb(err);
         }
-
-        // console.log('post', result)
-        // if (!result || !result.id) {
-        //     return cb(null, null);
-        // }
   
-        var game = new Game(result.permlink, result.author, 1);
+        var game = new Game(result.permlink, result.author);
+        game.isMy = result.author == author;
+
+
         //console.log('game', game);
 
         golosJs.api.getContentReplies(result.author, result.permLink, (err, comments) => {
@@ -207,6 +205,7 @@ Game.getGame = function(author, permLink, cb ) {
 
                      if ('JOIN' == message.type) {
                          game.opponent = message.user;
+                         game.myMove = !game.isMy;
                      } else if ('MOVE' == message.type) {
                          game.moves.push({
                             user: commentAuthor,
