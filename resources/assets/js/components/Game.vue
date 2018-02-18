@@ -64,46 +64,6 @@
     var GAME_IN_PROGRESS = 2;
     var GAME_DRAW = 3;
 
-    let addPost = (title, body) => {
-        //Добавить пост
-        /**
-         * comment() add a post
-         * @param {Base58} wif - private posting key
-         * @param {String} parentAuthor - for add a post, empty field
-         * @param {String} parentPermlink - main tag
-         * @param {String} author - author of the post
-         * @param {String} permlink - url-address of the post
-         * @param {String} title - header of the post
-         * @param {String} body - text of the post
-         * @param {String} jsonMetadata - meta-data of the post (images etc.)
-         * Это тестовый пост записанный с использованием golos-js
-         */
-
-        var wif = privWif;
-        var parentAuthor = '';
-        var parentPermlink = 'golos-laravel-catalog';
-        var author = username;
-        var permlink = `golos-laravel-catalog-${Date.now()}`;
-        var title = title;
-        var body = body;
-        var jsonMetadata = '{}';
-
-        golosJs.api.login('', '', function(err, result) {
-            console.log('broadcast enable');
-            //console.log(err, result);
-            if (result === true) {
-                golosJs.broadcast.comment(wif, parentAuthor, parentPermlink, author, permlink, title, body, jsonMetadata, function(err, result) {
-                    if (!err) {
-                        console.log('comment', result);
-                    }
-                    else console.error(err);
-                });
-            } else {
-                console.log('Упппсс... Что то пошло не так!');
-            }
-        });
-    };
-
     //0 => null
     //1 => X
     //2 => O
@@ -116,28 +76,6 @@
             Vue.set(map[i], j, 0);
         }
     }
-
-    //map codes to array index
-    //b2 to map[1][1]
-    let mapping = (code) => {
-        let letters = ['a', 'b', 'c'];
-        let nums = [1, 2, 3];
-
-        let chars = code.split('');
-
-        let first, second;
-
-        for(let i = 0; i < count; i++) {
-            if(letters[i] == chars[0]) {
-                first = i;
-            }
-            if(nums[i] == chars[1]) {
-                second = i;
-            }
-        }
-
-        return [first, second];
-    };
 
     let checkDiagonal = (symb) => {
         let toright, toleft, res = false;
@@ -274,14 +212,14 @@
                 }
             },
             onInit() {
-                var timer = setInterval(() => {
-                    Vue.set(map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), Math.floor(Math.random() * 3));
-                    let res = checkWin(1);
-                    this.$store.commit('winclass', res[1]);
-                    if(res == undefined) clearInterval(timer);
-                    if(res[0] == GAME_WIN) clearInterval(timer);
-                    console.log('Результат: ' + (res[0]));
-                }, 50);
+//                var timer = setInterval(() => {
+//                    Vue.set(map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), Math.floor(Math.random() * 3));
+//                    let res = checkWin(1);
+//                    this.$store.commit('winclass', res[1]);
+//                    if(res == undefined) clearInterval(timer);
+//                    if(res[0] == GAME_WIN) clearInterval(timer);
+//                    console.log('Результат: ' + (res[0]));
+//                }, 50);
 
             }
         }

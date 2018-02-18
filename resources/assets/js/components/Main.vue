@@ -4,8 +4,8 @@
             <login v-on:success="logged"></login>
         </div>
         <div v-if="$store.state.state == 1" class="fullheight">
-            <game v-bind:game="gameWrapper"></game>
-            <!--<agreement v-on:agree="agree"></agreement>-->
+            <!--<game v-bind:game="gameWrapper"></game>-->
+            <agreement v-on:agree="agree"></agreement>
         </div>
         <div v-if="$store.state.state == 2" class="fullheight">
             <game v-bind:game="gameWrapper"></game>
