@@ -46,7 +46,7 @@ function comment(user, parentAuthor, parentPermlink, title, info, cb) {
         }
 
         var permLink = Game.generateId();
-        var body = JSON.stringify({creator: username});
+        var body = JSON.stringify({creator: user.login});
 
         var jsonMetadata = {
             info: info
@@ -89,6 +89,8 @@ Game.STATUS_DONE = 2;
 Game.RESULT_WIN = 1;
 Game.RESULT_DRAW = 3;
 Game.RESULT_IN_PROGRESS = 2;
+
+Game.SIZE = 3;
 
 Game.prototype.persist = function () {
     var game = {
@@ -227,12 +229,12 @@ Game.getGame = function(author, permLink, cb ) {
 
 Game.createGame = function (user, cb) {
 
-    var title = `Игра создана ${ username }`;
+    var title = `Игра создана ${ user.login }`;
 
     var data = {
         app: Game.PARENT_PERMLINK,
         type: 'created',
-        creator: username
+        creator: user.login
     };
 
     comment(user, '', Game.PARENT_PERMLINK, title, data, function(err, result, permLink) {
@@ -240,7 +242,7 @@ Game.createGame = function (user, cb) {
             return cb(err);
         }
 
-        var game = new Game(permLink, username);
+        var game = new Game(permLink, user.login);
         cb(null, game);
     });
 };
@@ -320,7 +322,7 @@ Game.prototype.join = function(user, cb) {
     var data = {
         app: Game.PARENT_PERMLINK,
         type: "JOIN",
-        user: username
+        user: user.login
     };
 
     comment(user, this.author, this.permLink, '', data, function(err, result, permLink) {
@@ -496,12 +498,12 @@ Game.prototype.checkDiagonal = function(symb) {
     var winClass = '';
     toright = true;
     toleft = true;
-    for (let i=0; i < count; i++) {
+    for (let i=0; i < Game.SIZE; i++) {
         toright &= (this.map[i][i] == symb);
-        toleft &= (this.map[count - i - 1][i] == symb);
+        toleft &= (this.map[Game.SIZE - i - 1][i] == symb);
 
         isInProgressRight = (this.map[i][i] == 0);
-        isInProgressLeft = (this.map[count - i - 1][i] == 0);
+        isInProgressLeft = (this.map[Game.SIZE - i - 1][i] == 0);
     }
 
     if (toright) winClass = 'win-00-22';
@@ -524,10 +526,10 @@ Game.prototype.checkLines = function(symb) {
     var cols = 0, rows = 0, res = false;
     var inProgress= false, isInProgressRight = false, isInProgressLeft = false;
     var winClass = '';
-    for (let col=0; col < count; col++) {
+    for (let col=0; col < Game.SIZE; col++) {
         cols = true;
         rows = true;
-        for (let row=0; row < count; row++) {
+        for (let row=0; row < Game.SIZE; row++) {
             cols &= (this.map[col][row] == symb);
             rows &= (this.map[row][col] == symb);
 
@@ -548,8 +550,8 @@ Game.prototype.checkLines = function(symb) {
 };
 
 Game.prototype.isGameEnded = function() {
-    for (let col=0; col < count; col++) {
-        for (let row=0; row < count; row++) {
+    for (let col=0; col < Game.SIZE; col++) {
+        for (let row=0; row < Game.SIZE; row++) {
             if(this.map[col][row] == 0) {
                 return false;
             }

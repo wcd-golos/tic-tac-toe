@@ -62,17 +62,21 @@
                 this.time = 20;
                 var timer = setInterval(() => {
                     this.time--;
-                    console.log(this.time);
                     if(this.time == 0) clearInterval(timer);
                 }, 1000);
             },
 
             step(valueInCell, i, j) {
+                if(!this.$store.state.game.myMove) {
+                    console.log('Ход оппонента');
+                    return;
+                }
                 let permissions = JSON.parse(localStorage.permissions);
                 this.$store.state.game.move({
                     login: permissions.user,
                     key: permissions.posting
                 }, i, j, (err, res) => {
+                    console.log('MOVE: '+this.$store.state.game.myMove);
                     if(err) {
                         console.log(err);
                         return;

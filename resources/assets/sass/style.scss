@@ -47,14 +47,6 @@ body {
     align-items: center;
     justify-content: center;
 
-    .start-images {
-        display: block;
-        max-width: 100%;
-        margin-bottom: 30px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
     .submit-main-screen {
         background-color: #CBDBD7;
         width: 100%;
@@ -296,7 +288,7 @@ body {
         top: 0;
         bottom: 0;
         left: 0;
-        background-image: url(../images/vertical.png);
+        background-images: url(../images/vertical.png);
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 15% 0;
@@ -313,7 +305,7 @@ body {
         top: 0;
         bottom: 0;
         left: 0;
-        background-image: url(../images/vertical.png);
+        background-images: url(../images/vertical.png);
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 50% 0;
@@ -329,7 +321,7 @@ body {
         top: 0;
         bottom: 0;
         left: 0;
-        background-image: url(../images/vertical.png);
+        background-images: url(../images/vertical.png);
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 85% 0;
@@ -345,7 +337,7 @@ body {
         top: 0;
         bottom: 0;
         left: 0;
-        background-image: url(../images/horizont.png);
+        background-images: url(../images/horizont.png);
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 0 16%;
@@ -360,7 +352,7 @@ body {
         top: 0;
         bottom: 0;
         left: 0;
-        background-image: url(../images/horizont.png);
+        background-images: url(../images/horizont.png);
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 0 50%;
@@ -376,7 +368,7 @@ body {
         top: 0;
         bottom: 0;
         left: 0;
-        background-image: url(../images/horizont.png);
+        background-images: url(../images/horizont.png);
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 0 85%;
@@ -392,7 +384,7 @@ body {
         top: 0;
         bottom: 0;
         left: 0;
-        background-image: url(../images/left.png);
+        background-images: url(../images/left.png);
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 0 85%;
@@ -408,7 +400,7 @@ body {
         top: 0;
         bottom: 0;
         left: 0;
-        background-image: url(../images/right.png);
+        background-images: url(../images/right.png);
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 0 85%;
@@ -463,6 +455,14 @@ body {
         padding: 0 10px;
         box-sizing: border-box;
     }
+}
+
+.start-img {
+    display: block;
+    max-width: 100%;
+    margin-bottom: 30px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 // spinner
