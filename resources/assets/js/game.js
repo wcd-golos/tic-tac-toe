@@ -87,7 +87,7 @@ function Game(permLink, author) {
     ];
 };
 
-Game.PARENT_PERMLINK = 'tic-tac-toe-games-22';
+Game.PARENT_PERMLINK = 'tic-tac-toe-games-23';
 
 
 Game.STATUS_NEW = 0;
@@ -190,7 +190,7 @@ Game.getGame = function(author, user, permLink, cb ) {
   
         var game = new Game(result.permlink, result.author);
         game.isMy = result.author == user;
-
+        game.myMove = !game.isMy;
 
         //console.log('game', game);
 
@@ -211,7 +211,7 @@ Game.getGame = function(author, user, permLink, cb ) {
 
                      if ('JOIN' == message.type) {
                          game.opponent = message.user;
-                         game.myMove = !game.isMy;
+
                      } else if ('MOVE' == message.type) {
                          game.moves.push({
                             user: commentAuthor,

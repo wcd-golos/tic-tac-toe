@@ -57,7 +57,7 @@
 
             setInterval(() => {
                 var game = this.$store.state.game;
-                Game.sync(game, JSON.parse(localStorage.permissions).user, function () {
+                Game.sync(game, JSON.parse(localStorage.permissions).user, () => {
                     this.$store.commit('game', game);
                     console.log('sync');
                 });
