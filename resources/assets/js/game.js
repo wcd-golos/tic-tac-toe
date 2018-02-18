@@ -13,6 +13,12 @@ var golosJs = require('golos-js');
 //     "type": 'start',
 //     "userJoined": 'username'
 // }
+//  message when transaction created
+// {
+//     "app": 'tic-tac-toe-games',
+//     "type": 'transaction',
+//     "escrow_id": 12341234
+// }
 // message when move
 // {
 //     "app": "tic-tac-toe-games",

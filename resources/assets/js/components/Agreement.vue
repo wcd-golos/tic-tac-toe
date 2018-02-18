@@ -85,6 +85,7 @@
                             //присоединение к игре
 
                             var game_author = result.author;
+                            var game_permlink = result.permlink;
 
                             //создание транзакции
                             Game.createTransfer(
@@ -103,10 +104,31 @@
                                     if (!err) {
                                         localStorage.escrowId = escrow_id;
 
+                                        var metaData = {
+                                            app: Game.PARENT_PERMLINK,
+                                            type: "transaction",
+                                            escrow_id: escrow_id
+                                        };
+                                        var permLink = Game.generateId();
+                                        var body = JSON.stringify({oponent: 'send transaction'});
+
                                         //отправление комментария с escrow_id
+                                        golosJs.broadcast.comment(
+                                            this.$store.state.agent2_priv_wif, 
+                                            game_author, 
+                                            game_permlink, 
+                                            this.$store.state.agent2, 
+                                            permLink, 
+                                            'Транзакция созданна оппонентом', 
+                                            body, 
+                                            metaData, 
+                                            function(err, result) {
+                                                console.log('send escrow_id to creator');
+                                                //cb(err, result, permLink);
+                                            }
+                                        );
+
                                         
-
-
                                         //подтверждение моей транзакции агентом
                                         Game.approveTransaction(
                                             this.$store.state.agent2,
