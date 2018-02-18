@@ -210,6 +210,10 @@ Game.STATUS_NEW = 0;
 Game.STATUS_PLAYING = 1;
 Game.STATUS_DONE = 2;
 
+Game.RESULT_WIN = 1;
+Game.RESULT_DRAW = 3;
+Game.RESULT_IN_PROGRESS = 2;
+
 Game.prototype.persist = function () {
     var game = {
         id: this.id,
@@ -253,6 +257,22 @@ Game.prototype.move = function(user, x, y, cb) {
         });
 
         self.myMove = false;
+
+        var result = self.checkWin();
+        if (result[0] == Game.RESULT_IN_PROGRESS) {
+            console.log('in progress');
+        } else {
+            var data = {
+                app: Game.PARENT_PERMLINK,
+                type: "DONE",
+                user: user.login,
+                winner: result[0] == Game.RESULT_WIN ? user.login : ''
+            };
+
+            self.state = Game.STATUS_DONE;
+
+            comment(user, game.author, game.id, 'move', data, function(err, result, id) {});
+        }
 
         cb(err, result);
     });
@@ -464,9 +484,9 @@ Game.blockFilter = function (block, permLink) {
 };
 
 Game.prototype.checkDiagonal = function(symb) {
-    let toright, toleft, res = false;
-    let inProgress= false, isInProgressRight = false, isInProgressLeft = false;
-    let winClass = '';
+    var toright, toleft, res = false;
+    var inProgress= false, isInProgressRight = false, isInProgressLeft = false;
+    var winClass = '';
     toright = true;
     toleft = true;
     for (let i=0; i < count; i++) {
@@ -487,16 +507,16 @@ Game.prototype.checkDiagonal = function(symb) {
     }
 
     if(res === true) {
-        return [GAME_WIN, winClass];
+        return [Game.RESULT_WIN, winClass];
     } else {
-        return [GAME_IN_PROGRESS, winClass];
+        return [Game.RESULT_IN_PROGRESS, winClass];
     }
 };
 
 Game.prototype.checkLines = function(symb) {
-    let cols = 0, rows = 0, res = false;
-    let inProgress= false, isInProgressRight = false, isInProgressLeft = false;
-    let winClass = '';
+    var cols = 0, rows = 0, res = false;
+    var inProgress= false, isInProgressRight = false, isInProgressLeft = false;
+    var winClass = '';
     for (let col=0; col < count; col++) {
         cols = true;
         rows = true;
@@ -510,14 +530,14 @@ Game.prototype.checkLines = function(symb) {
 
         if (rows) winClass = 'win-'+col+'0-'+col+'2';
         if (cols) winClass = 'win-0'+col+'-2'+col;
-        if (cols || rows) return [GAME_WIN, winClass];
+        if (cols || rows) return [Game.RESULT_WIN, winClass];
     }
     //если нет выйграша то проверка на незаконченную игру
     if(!res) {
         if (isInProgressRight || isInProgressLeft) inProgress = true;
     }
 
-    return [GAME_IN_PROGRESS, winClass];
+    return [Game.RESULT_IN_PROGRESS, winClass];
 };
 
 Game.prototype.isGameEnded = function() {
@@ -537,14 +557,14 @@ Game.prototype.checkWin = function(sym) {
     var resLines = this.checkLines(sym);
     var resDiags = this.checkDiagonal(sym);
 
-    if(resLines[0] == GAME_WIN) {
+    if(resLines[0] == Game.RESULT_WIN) {
         return resLines;
-    } else if(resDiags[0] == GAME_WIN) {
+    } else if(resDiags[0] == Game.RESULT_WIN) {
         return resDiags;
-    } else if(resLines[0] == GAME_IN_PROGRESS || resDiags[0] == GAME_IN_PROGRESS) {
-        return [GAME_IN_PROGRESS, ''];
+    } else if(resLines[0] == Game.RESULT_IN_PROGRESS || resDiags[0] == Game.RESULT_IN_PROGRESS) {
+        return [Game.RESULT_IN_PROGRESS, ''];
     } else if (this.isGameEnded()) {
-        return [GAME_DRAW, ''];
+        return [Game.RESULT_DRAW, ''];
     }
     console.log(resLines);
     console.log(resDiags);
