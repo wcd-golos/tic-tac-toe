@@ -9,11 +9,14 @@ const store = new Vuex.Store({
         posting: '',
         active: '',
         state: 0,
-        game_golos_rate: 0.010,
-        game_gbg_rate: 0.000,
-        game_commision: 0.001,
-        agent: 'timur.zevriev',
-        aget_active_wif: '5JmAaq8NGKHEZDiccH1AtYfHPVpUo1TB2Ls89gACYpN3nchDPgG'
+        win: false,
+        game_golos_rate: 0.010, // колличество переводимых голосов
+        game_gbg_rate: 0.000, // колличество переводимых золотых голосов
+        game_commision: 0.001, // доход гаранту/агенту
+        agent: 'timur.zevriev', // гарант/агент
+        aget_active_wif: '5JmAaq8NGKHEZDiccH1AtYfHPVpUo1TB2Ls89gACYpN3nchDPgG', // активный ключ агента
+        transaction_approve_time: 3, // время для подтверждения транзакции
+        transaction_expiration_time: 48 // время жизни защиты транзакции, после любой может получить деньги
     },
     mutations: {
         permissions (state, perm) {
