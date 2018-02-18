@@ -81,7 +81,7 @@ function Game(permLink, author) {
     ];
 };
 
-Game.PARENT_PERMLINK = 'tic-tac-toe-games-9';
+Game.PARENT_PERMLINK = 'tic-tac-toe-games-13';
 
 
 Game.STATUS_NEW = 0;
@@ -174,7 +174,7 @@ Game.getCurrentGame = function() {
     }
 };
 
-Game.getGame = function(author, permLink, cb ) {
+Game.getGame = function(author, user, permLink, cb ) {
 
     golosJs.api.getContent(author, permLink, function(err, result) {
 
@@ -286,7 +286,7 @@ Game.createGame = function (user, cb) {
     });
 };
 
-Game.getLastGame = function (cb) {
+Game.getLastGame = function (user, cb) {
 
     console.log('getLastGame');
 
@@ -307,7 +307,7 @@ Game.getLastGame = function (cb) {
 
         var game = result[0];
 
-        Game.getGame(game.author, game.permlink, cb);
+        Game.getGame(game.author, user.login, game.permlink, cb);
 
         /*if (err) {
             return cb(err);
@@ -342,7 +342,7 @@ Game.getLastGame = function (cb) {
 };
 
 Game.play = function(user, cb) {
-    Game.getLastGame((err, game) => {
+    Game.getLastGame(user, (err, game) => {
 
         if (err) {
             return cb(err);
@@ -353,7 +353,7 @@ Game.play = function(user, cb) {
             return;
         }
 
-        Game.getGame(game.author, game.permLink, function(err, game) {
+        Game.getGame(game.author, user.login, game.permLink, function(err, game) {
             if (err) {
                 return cb(err);
             }
@@ -414,7 +414,6 @@ Game.blockFilter = function (block, permLink) {
     return false;
 };
 
-
 // создать транзакцию
 Game.createTransfer = function(from, active_wif, to, agent, agent_priv_wif, gbg_amount, golos_amount, fee, sendDeadline, sendEscrowExpiration, terms, cb) {
     console.log('create transfer');
@@ -461,7 +460,6 @@ Game.createTransfer = function(from, active_wif, to, agent, agent_priv_wif, gbg_
         );
     });
 };
-
 
 //получить транзакцию
 Game.loadTransaction = function(from, escrow_id) {
