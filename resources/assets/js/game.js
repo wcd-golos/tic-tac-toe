@@ -115,6 +115,7 @@ Game.prototype.checkEnd = function () {
 Game.prototype.move = function(user, x, y, cb) {
     console.log('move');
 
+
     if (this.map[x][y]) {
         // illegal move
         return cb('Вы не можете сделать этот ход');
@@ -151,7 +152,9 @@ Game.prototype.move = function(user, x, y, cb) {
             console.log('in progress');
         } else {
             this.className = result[1];
-
+            setTimeout(()=>{
+                window,store.state.state = 2;
+            })
             var data = {
                 app: Game.PARENT_PERMLINK,
                 type: "DONE",
