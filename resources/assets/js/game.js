@@ -81,7 +81,7 @@ function Game(permLink, author) {
     ];
 };
 
-Game.PARENT_PERMLINK = 'tic-tac-toe-ga555697686544358';
+Game.PARENT_PERMLINK = 'tic-tac-toe-games';
 
 
 Game.STATUS_NEW = 0;
