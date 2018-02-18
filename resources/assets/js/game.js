@@ -81,7 +81,7 @@ function Game(permLink, author) {
     ];
 };
 
-Game.PARENT_PERMLINK = 'tic-tac-toe-games';
+Game.PARENT_PERMLINK = 'tic-tac-toe-games-3';
 
 
 Game.STATUS_NEW = 0;
@@ -201,7 +201,7 @@ Game.getGame = function(author, permLink, cb ) {
 
             comments.forEach(comment => {
                 try {
-                    var meta = JSON.parse(comment.jsonMetadata);
+                    var meta = JSON.parse(comment.json_metadata);
                     var message = meta.info || {};
                     var commentAuthor = comment.author;
 
@@ -240,7 +240,7 @@ Game.sync = function (game, user, cb) {
 
         comments.forEach(comment => {
             try {
-                var meta = JSON.parse(comment.jsonMetadata);
+                var meta = JSON.parse(comment.json_metadata);
                 var message = meta.info || {};
                 var commentAuthor = comment.author;
 
