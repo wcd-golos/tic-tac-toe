@@ -81,130 +81,6 @@ function Game(permLink, author) {
 
 Game.PARENT_PERMLINK = 'tic-tac-toe-game-test22';
 
-// создать транзакцию
-function createTransfer(from, active_wif, to, agent, gbg_amount, golos_amount, fee, sendDeadline, sendEscrowExpiration, terms) {
-    console.log('create transfer');
-
-    //генерация id транзакции
-    var escrow_id = parseInt(Math.random() * (99999999 - 10000000) + 10000000); // ID транзакции
-    console.log('escrow_id: ', escrow_id);
-
-    golosJs.api.getDynamicGlobalProperties(function(err, response) {
-        // Added 'Z' reciver get correct UTC time in all browsers
-        var ratification_deadline = new Date(response.time+'Z');
-        ratification_deadline.setMinutes(ratification_deadline.getMinutes() + parseInt(sendDeadline) * 60 - 1);
-
-        var escrow_expiration = new Date(response.time+'Z');
-        escrow_expiration.setHours(escrow_expiration.getHours() + parseInt(sendEscrowExpiration));
-        
-        console.log('getDynamicGlobalProperties: ', response);
-
-        var objTerms = {
-            terms: terms
-        };
-
-        // создание транзакции
-        golosJs.broadcast.escrowTransfer(
-            active_wif, // sender active key
-            from, // sender name
-            to, // reciver name
-            agent, // agent name
-            escrow_id, // int, ID создоваемой транзакции,
-            gbg_amount, // "0.100 GBG", колличество переводимых золотых голосов
-            golos_amount, // "0.100 GOLOS", колличество переводимых голосов
-            fee, // "0.001 GOLOS", доход гаранту/агенту в GOLOS или GBG
-            ratification_deadline, // hours, период, в течение которого получатель и гарант должны согласится с условиями сделки. Если хоть один не успеет сделать этого, средства будут автоматически возвращены отправителю
-            escrow_expiration, // hours, срок, после которого любая из сторон сможет выполнить любые действия (либо забрать средства себе, либо отправить их другой стороне). Этот период не может быть меньше, чем предыдущий
-            JSON.stringify(terms),
-            function(err, response) {
-                if(!err && response.ref_block_num) {
-                    console.log('create transaction: ', response);
-                    
-                    //TODO: сохранить имя отправителя, получателя и код транзакции escrow_id
-                } else {
-                    console.log('create transaction error: ', err);
-                }
-            }
-        );
-    });
-}
-
-
-//получить транзакцию
-function loadTransaction(from, escrow_id) {
-
-    golosJs.api.getEscrow(
-        from, //отправитель
-        escrow_id, // id транзакции
-        function(err, response) {
-            console.log('load transaction: ', response, err);
-            if(err) {
-                alert('Не удолось получить транзакцию');
-            }
-        }
-    )
-}
-
-
-// подтверждение перевода агентом и получателем
-function approveTransaction(login, wif, from, to, agent, escrow_id, approve) {
-    golosJs.broadcast.escrowApprove(
-        wif, // активный ключ подтверждающего
-        from, // от кого перевод
-        to, // кому перевод
-        agent, 
-        login, // тот кто подтверждает
-        escrow_id, // id транзакции
-        approve, // true or false
-        function(err, response) {
-            //console.log('approveTransaction: ', response, err);
-            if (err) {
-                alert('Не удалось подтвердить транзакцию');
-            }
-        }
-    );
-}
-
-
-// агент решает кому пойдут деньги или отказ от денег одним из пользователей (после подтверждения получателем и агентом, отправитель разрешает перевод)
-function releaseTransaction(login, wif, from, to, agent, escrow_id, reciever, gbg_amount, golos_amount) {
-    golosJs.broadcast.escrowRelease(
-        wif, // ключ того кто отказываеться от денег
-        from, // от кого транзакция
-        to, // кому
-        agent, 
-        login, // тот кто отказываеться от денег
-        reciever, // тот кто получает деньги
-        escrow_id, // id транзакции
-        gbg_amount, // колличество золотых голосов в транзакции
-        golos_amount, // колличество голосов в транзакции
-        function(err, response) {
-            //console.log('releaseTransaction: ', response, err);
-            if (err) {
-                alert('Не удалось подтвердить оканчательное отправление денег');
-            }
-        }
-    );
-}
-
-
-// открыть спор для транзакции
-function disputeTransaction (login, wif, from, to, agent, escrow_id) {
-    golosJs.broadcast.escrowDispute(
-        wif,
-        from,
-        to,
-        agent,
-        login, // тот кто открывает спор
-        escrow_id,
-        function(err, response) {
-            //console.log('disputeTransaction: ', response, err);
-            if (err) {
-                alert('Не удалось подтвердить оканчательное отправление денег');
-            }
-        }
-    );
-}
 
 Game.STATUS_NEW = 0;
 Game.STATUS_PLAYING = 1;
@@ -482,6 +358,137 @@ Game.blockFilter = function (block, permLink) {
 
     return false;
 };
+
+
+// создать транзакцию
+Game.createTransfer = function(from, active_wif, to, agent, agent_active_wif, gbg_amount, golos_amount, fee, sendDeadline, sendEscrowExpiration, terms) {
+    console.log('create transfer');
+
+    //генерация id транзакции
+    var escrow_id = parseInt(Math.random() * (99999999 - 10000000) + 10000000); // ID транзакции
+    console.log('escrow_id: ', escrow_id);
+
+    golosJs.api.getDynamicGlobalProperties(function(err, response) {
+        // Added 'Z' reciver get correct UTC time in all browsers
+        var ratification_deadline = new Date(response.time+'Z');
+        ratification_deadline.setMinutes(ratification_deadline.getMinutes() + parseInt(sendDeadline) * 60 - 1);
+
+        var escrow_expiration = new Date(response.time+'Z');
+        escrow_expiration.setHours(escrow_expiration.getHours() + parseInt(sendEscrowExpiration));
+        
+        console.log('getDynamicGlobalProperties: ', response);
+
+        var objTerms = {
+            terms: terms
+        };
+
+        // создание транзакции
+        golosJs.broadcast.escrowTransfer(
+            active_wif, // sender active key
+            from, // sender name
+            to, // reciver name
+            agent, // agent name
+            escrow_id, // int, ID создоваемой транзакции,
+            gbg_amount, // "0.100 GBG", колличество переводимых золотых голосов
+            golos_amount, // "0.100 GOLOS", колличество переводимых голосов
+            fee, // "0.001 GOLOS", доход гаранту/агенту в GOLOS или GBG
+            ratification_deadline, // hours, период, в течение которого получатель и гарант должны согласится с условиями сделки. Если хоть один не успеет сделать этого, средства будут автоматически возвращены отправителю
+            escrow_expiration, // hours, срок, после которого любая из сторон сможет выполнить любые действия (либо забрать средства себе, либо отправить их другой стороне). Этот период не может быть меньше, чем предыдущий
+            JSON.stringify(terms),
+            function(err, response) {
+                if(!err && response.ref_block_num) {
+                    console.log('create transaction: ', response);
+                    localStorage.escrowId = escrow_id;
+
+                    // approve by agent
+                    Game.approveTransaction(agent, agent_active_wif, from, to, agent, escrow_id, true);
+                    
+                    //TODO: сохранить имя отправителя, получателя и код транзакции escrow_id
+                } else {
+                    console.log('create transaction error: ', err);
+                }
+            }
+        );
+    });
+};
+
+
+//получить транзакцию
+Game.loadTransaction = function(from, escrow_id) {
+
+    golosJs.api.getEscrow(
+        from, //отправитель
+        escrow_id, // id транзакции
+        function(err, response) {
+            console.log('load transaction: ', response, err);
+            if(err) {
+                alert('Не удолось получить транзакцию');
+            }
+        }
+    );
+};
+
+
+// подтверждение перевода агентом и получателем
+Game.approveTransaction = function(login, wif, from, to, agent, escrow_id, approve) {
+    golosJs.broadcast.escrowApprove(
+        wif, // активный ключ подтверждающего
+        from, // от кого перевод
+        to, // кому перевод
+        agent, 
+        login, // тот кто подтверждает
+        escrow_id, // id транзакции
+        approve, // true or false
+        function(err, response) {
+            console.log('approveTransaction: ', response, err);
+            if (err) {
+                alert('Не удалось подтвердить транзакцию');
+            }
+        }
+    );
+};
+
+
+// агент решает кому пойдут деньги или отказ от денег одним из пользователей (после подтверждения получателем и агентом, отправитель разрешает перевод)
+Game.releaseTransaction = function(login, wif, from, to, agent, escrow_id, reciever, gbg_amount, golos_amount) {
+    golosJs.broadcast.escrowRelease(
+        wif, // ключ того кто отказываеться от денег
+        from, // от кого транзакция
+        to, // кому
+        agent, 
+        login, // тот кто отказываеться от денег
+        reciever, // тот кто получает деньги
+        escrow_id, // id транзакции
+        gbg_amount, // колличество золотых голосов в транзакции
+        golos_amount, // колличество голосов в транзакции
+        function(err, response) {
+            //console.log('releaseTransaction: ', response, err);
+            if (err) {
+                alert('Не удалось подтвердить оканчательное отправление денег');
+            }
+        }
+    );
+};
+
+
+// открыть спор для транзакции
+Game.disputeTransaction = function (login, wif, from, to, agent, escrow_id) {
+    golosJs.broadcast.escrowDispute(
+        wif,
+        from,
+        to,
+        agent,
+        login, // тот кто открывает спор
+        escrow_id,
+        function(err, response) {
+            //console.log('disputeTransaction: ', response, err);
+            if (err) {
+                alert('Не удалось подтвердить оканчательное отправление денег');
+            }
+        }
+    );
+};
+
 
 Game.prototype.checkDiagonal = function(symb) {
     var toright, toleft, res = false;

@@ -43,12 +43,6 @@
 </template>
 
 <script>
-    var count= 3;
-    var GAME_WIN = 1;
-    var GAME_FAIL = 0;
-    var GAME_IN_PROGRESS = 2;
-    var GAME_DRAW = 3;
-
     export default {
         data: () => {
             return {
@@ -83,23 +77,7 @@
                         console.log(err);
                         return;
                     }
-                    waitForOpponent();
                 });
-//                if(valueInCell != 0) {
-//                    alert('Вы не можете сделать ход в эту клетку');
-//                    return;
-//                } else {
-//
-//                    Vue.set(map[i], j, 1);
-//                    let res = checkWin(1);
-//                    if(res[0] == GAME_WIN) {
-//                        console.log(res);
-//                        this.$store.commit('winclass', res[1]);
-//                        alert('!!!Вы выйграли!!!');
-//                    } else if(res[0] == GAME_DRAW) {
-//                        alert('Ничья!');
-//                    }
-//                }
             },
 
             onInit() {
