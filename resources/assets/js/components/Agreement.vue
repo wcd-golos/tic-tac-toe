@@ -100,7 +100,7 @@
                                 this.$store.state.transaction_approve_time,
                                 this.$store.state.transaction_expiration_time,
                                 this.$store.state.get_golos_terms,
-                                function (err, escrow_id) {
+                                (err, escrow_id) => {
                                     if (!err) {
                                         localStorage.escrowId = escrow_id;
 
