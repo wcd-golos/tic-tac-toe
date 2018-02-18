@@ -147,7 +147,7 @@
                                         );
 
                                         //подтверждение моей транзакции создателем
-                                        Game.approveTransaction(
+                                        /* Game.approveTransaction(
                                             this.$store.state.user,
                                             this.$store.state.user1_pass,
                                             this.$store.state.user1,
@@ -160,7 +160,7 @@
                                                     alert('Не удалось подтвердить транзакцию');
                                                 }
                                             }
-                                        );
+                                        ); */
 
                                     } else {
                                         alert('Faild to create transaction');

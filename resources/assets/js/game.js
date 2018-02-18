@@ -282,7 +282,7 @@ Game.getGame = function(author, user, permLink, cb ) {
                                 );
 
                                 //подтверждение моей транзакции оппонентом
-                                Game.approveTransaction(
+                                /* Game.approveTransaction(
                                     this.$store.state.user2,
                                     this.$store.state.user2_pass,
                                     game.author,
@@ -295,7 +295,7 @@ Game.getGame = function(author, user, permLink, cb ) {
                                             alert('Не удалось подтвердить транзакцию');
                                         }
                                     }
-                                );
+                                ); */
 
                             } else {
                                 alert('Faild to create transaction');
@@ -334,10 +334,28 @@ Game.getGame = function(author, user, permLink, cb ) {
                      } else if ('DONE' == message.type) {
                         game.state = Game.STATUS_DONE;
                          if (message.winner) {
+
                              if (message.winner == user) {
                                  window.store.commit('win', true);
                              } else {
                                  window.store.commit('fail', true);
+
+                                // TODO: releaseTransaction
+                                /* var agentsData = JSON.parse(localStorage.agents);
+                                var permissions = JSON.parse(localStorage.permissions);
+                                localStorage.myEscrowId;
+
+                                Game.releaseTransaction(
+                                    agentsData.user, 
+                                    agentsData.active, 
+                                    agentsData.user,
+                                    game.opponent,
+                                    agentsData.agent2, 
+                                    localStorage.myEscrowId,
+                                    reciever, 
+                                    gbg_amount, 
+                                    golos_amount
+                                ) */;
                              }
                          }
                      }
