@@ -73,6 +73,7 @@ function createTransfer(from, active_wif, to, agent, gbg_amount, golos_amount, f
             terms: terms
         };
 
+        // создание транзакции
         golosJs.broadcast.escrowTransfer(
             active_wif, // sender active key
             from, // sender name
