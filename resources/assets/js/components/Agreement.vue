@@ -4,7 +4,22 @@
             <img src="images/img1.png" alt="" class="start-img">
             <h3>Добро пожаловать! <br> Играть <b>=</b> <span>0.01 голос</span></h3>
             <a href="javascript:void(0);" v-if="!loader" class="link-btn" v-on:click="emit">ИГРАТЬ</a>
-            <div v-if="loader">Загрузка...</div>
+            <div v-if="loader">
+                <div class="sk-circle">
+                    <div class="sk-circle1 sk-child"></div>
+                    <div class="sk-circle2 sk-child"></div>
+                    <div class="sk-circle3 sk-child"></div>
+                    <div class="sk-circle4 sk-child"></div>
+                    <div class="sk-circle5 sk-child"></div>
+                    <div class="sk-circle6 sk-child"></div>
+                    <div class="sk-circle7 sk-child"></div>
+                    <div class="sk-circle8 sk-child"></div>
+                    <div class="sk-circle9 sk-child"></div>
+                    <div class="sk-circle10 sk-child"></div>
+                    <div class="sk-circle11 sk-child"></div>
+                    <div class="sk-circle12 sk-child"></div>
+                </div>
+            </div>
             <!-- <button v-on:click="addPost()">Post</button> -->
             <!-- <button v-on:click="addComment()">Comment</button> -->
         </div>
