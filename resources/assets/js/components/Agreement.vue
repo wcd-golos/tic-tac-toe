@@ -4,6 +4,8 @@
             <h3>Добро пожаловать! <br> Играть <b>=</b> <span>0.01 голос</span></h3>
             <a href="javascript:void(0);" v-if="!loader" class="link-btn" v-on:click="emit">ИГРАТЬ</a>
             <div v-if="loader">Загрузка...</div>
+            <!-- <button v-on:click="addPost()">Post</button> -->
+            <!-- <button v-on:click="addComment()">Comment</button> -->
         </div>
     </div>
 </template>
@@ -37,12 +39,16 @@
                 loader: false
             }
         },
+        created: function() {
+            //this.getActiveGames();
+        },
         methods: {
             emit: function () {
                 checkAccountGolosCount(this.$store.state.user, this.$store.state.game_golos_rate);
                 if (this.loader) {
                     return;
                 }
+<<<<<<< HEAD
                 this.loader= true;
                 this.$emit('agree', 1);
                 //проверям есть ли активне посты
@@ -52,7 +58,64 @@
                 //     //conole.log('err', err);
                 //     //console.log('res'. result);
                 // });
+=======
+                this.loader = true;
+                //console.log('store', this.$store.state.user);
+                //this.$store.commit('state', 2);
+                Game.play(this.$store.state.posting, this.$store.state.user, (err, result) => {
+                    if (!err) {
+                        console.log('new game', result);
+                        if (result.state === 0) {
+                            //создание новой игры
+                            //Запускаем вебсокеты и ждем когда присоеденится опонент
+                            console.log('game start Ready');
+                            this.startReady(result.permLink);
+                        } else if (result.state === 1) {
+                            //присоединение к игре
+                            console.log('joined to game');
+                        }
+                    } else {
+                        console.log('err', err);
+                        if (err.payload.id == 11) {
+                            this.loader = false;
+                            alert('Попробуйте чуть по позже');
+                        }
+                    }
+                });
+>>>>>>> 49bec6c0c6d8df4366e2f0d7ca9b0b984221d261
             },
+            startReady(permLink) {
+                let websocket = new WebSocket("wss://ws.golos.io");
+                websocket.onopen = (event) => {
+                    websocket.send(JSON.stringify({
+                        id: 1,
+                        method: 'call',
+                        params: ["database_api", "set_block_applied_callback", [0]]
+                    }));
+
+                    websocket.onmessage = (raw) => {
+                        var data = JSON.parse(raw.data);
+                        if (data.method === 'notice' && data.params) {
+                        var hex = data.params[1][0].previous.slice(0,8);
+                        var height = parseInt(hex, 16);
+
+                        websocket.send(JSON.stringify({
+                            id: 2,
+                            method: 'call',
+                            params: ['database_api', 'get_ops_in_block', [height, "false"]]
+                        }));
+
+                        } else if (data.id === 2) {
+                            //console.log('.');
+                            let start = Game.blockFilter(data.result, permLink);
+                            if (start) {
+                                //go to game
+                                console.log('go to game');
+                            }
+                        }
+                    }
+                }
+            }
         }
     };
 </script>
