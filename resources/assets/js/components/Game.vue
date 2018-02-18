@@ -53,6 +53,12 @@
             this.onInit();
             this.waitForStep();
             console.log('this.game', this.$store.state.game);
+
+            setInterval(() => {
+                Game.sync(this.$store.state.game, JSON.parse(localStorage.permissions).user, function () {
+                    console.log('sync');
+                });
+            }, 1000);
         },
         methods: {
             verifyUser () {

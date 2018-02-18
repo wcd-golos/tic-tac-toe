@@ -229,6 +229,44 @@ Game.getGame = function(author, permLink, cb ) {
     });
 };
 
+Game.sync = function (game, user, cb) {
+    golosJs.api.getContentReplies(game.author, game.permLink, (err, comments) => {
+
+        if (err) {
+            return cb(err);
+        }
+
+        game.state = comments.length > 0 ? Game.STATUS_PLAYING : Game.STATUS_NEW;
+
+        comments.forEach(comment => {
+            try {
+                var meta = JSON.parse(comment.jsonMetadata);
+                var message = meta.info || {};
+                var commentAuthor = comment.author;
+
+                if ('JOIN' == message.type) {
+                    game.opponent = message.user;
+                } else if ('MOVE' == message.type) {
+                    game.moves.push({
+                        user: commentAuthor,
+                        x:  message.x,
+                        y:  message.y
+                    });
+
+                    game.map[message.x][message.y] = game.author == user.author ? 2 : 1;
+                    game.myMove = commentAuthor != user.author;
+                } else if ('DONE' == message.type) {
+                    game.state = Game.STATUS_DONE;
+                }
+            } catch (e) {
+
+            }
+        });
+
+        return cb(null, game);
+    });
+};
+
 Game.createGame = function (user, cb) {
 
     var title = `Игра создана ${ user.login }`;
