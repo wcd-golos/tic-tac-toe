@@ -1,4 +1,5 @@
 <template>
+    <div class="fullheight">
     <div v-if="$store.state.win" class="fullheight">
         <div class="gradient">
             <div class="win-page">
@@ -27,6 +28,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </template>
 <script>
