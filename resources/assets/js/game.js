@@ -275,17 +275,17 @@ Game.getGame = function(author, permLink, cb ) {
 
             comments.forEach(comment => {
                 try {
-                    // var meta = JSON.parse(comment.jsonMetadata);
-                    // var tags = meta.tags || [];
-                    // var body = comment.body;
+                    var meta = JSON.parse(comment.jsonMetadata);
+                    var message: meta.info || {};
+                    var author = comment.author;
 
-                    // if (meta.indexOf('OPPONENT')) {
-                    //     game.opponent = body;
-                    // } else if (meta.indexOf('MOVE')) {
+                     if ('JOIN' == message.type) {
+                         game.opponent = body;
+                     } else if (meta.indexOf('MOVE')) {
 
-                    // } else if (meta.indexOf('WIN')) {
+                     } else if (meta.indexOf('WIN')) {
 
-                    // }
+                     }
                 } catch (e) {
 
                 }
@@ -378,7 +378,7 @@ Game.play = function(user, cb) {
                 return Game.createGame(user, cb);
             }
 
-            game.join(wif, username, function(err, result) {
+            game.join(user, function(err, result) {
                 game.state = 1;
                 cb(err, game);
             });
@@ -388,13 +388,13 @@ Game.play = function(user, cb) {
 
 Game.prototype.join = function(user, cb) {
 
-    var jsonMetadata = {
-        "app": Game.PARENT_PERMLINK,
-        "type": "start",
-        "userJoined": username
+    var data = {
+        app: Game.PARENT_PERMLINK,
+        type: "JOIN",
+        user: username
     };
 
-    comment(user, this.author, this.permLink, '', jsonMetadata, function(err, result, permLink) {
+    comment(user, this.author, this.permLink, '', data, function(err, result, permLink) {
         //console.log('CREATE post/comment', err, result);
         cb(err, result);
     });
