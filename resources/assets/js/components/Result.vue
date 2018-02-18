@@ -35,7 +35,6 @@
     export default {
         data: () => {
             return {
-                win: this.$store.state.win
             }
         },
         methods: {
