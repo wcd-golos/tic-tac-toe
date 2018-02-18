@@ -47,7 +47,7 @@ function comment(user, parentAuthor, parentPermlink, title, info, cb) {
         }
 
         var permLink = Game.generateId();
-        var body = JSON.stringify({creator: username});
+        var body = JSON.stringify({creator: user.login});
 
         var jsonMetadata = {
             info: info
@@ -77,7 +77,7 @@ function Game(permLink, author) {
     ];
 };
 
-Game.PARENT_PERMLINK = 'tic-tac-toe-game-test22';
+Game.PARENT_PERMLINK = 'tic-tac-toe-ga555697686544354';
 
 // создать транзакцию
 function createTransfer(from, active_wif, to, agent, gbg_amount, golos_amount, fee, sendDeadline, sendEscrowExpiration, terms) {
@@ -321,12 +321,12 @@ Game.getGame = function(author, permLink, cb ) {
 
 Game.createGame = function (user, cb) {
 
-    var title = `Игра создана ${ username }`;
+    var title = `Игра создана ${ user.login }`;
 
     var data = {
         app: Game.PARENT_PERMLINK,
         type: 'created',
-        creator: username
+        creator: user.login
     };
 
     comment(user, '', Game.PARENT_PERMLINK, title, data, function(err, result, permLink) {
@@ -334,7 +334,7 @@ Game.createGame = function (user, cb) {
             return cb(err);
         }
 
-        var game = new Game(permLink, username);
+        var game = new Game(permLink, user.login);
         cb(null, game);
     });
 };
@@ -414,7 +414,7 @@ Game.prototype.join = function(user, cb) {
     var data = {
         app: Game.PARENT_PERMLINK,
         type: "JOIN",
-        user: username
+        user: user.login
     };
 
     comment(user, this.author, this.permLink, '', data, function(err, result, permLink) {

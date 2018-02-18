@@ -157,7 +157,8 @@
                 myName: '',
                 hisName: 'Петя',
                 myStep: true,
-                time: 20,
+                time: 20
+                //game: null
             }
         },
         created: function() {
@@ -165,6 +166,7 @@
             let permissions = JSON.parse(localStorage.permissions);
             this.myName = permissions.user;
             this.waitForStep();
+            console.log('this.game', this.$store.state.game);
         },
         methods: {
             verifyUser () {
