@@ -217,19 +217,34 @@ Game.prototype.persist = function () {
     localStorage.currentGame = JSON.stringify(game);
 };
 
+Game.prototype.checkEnd = function () {
+
+};
+
 Game.prototype.move = function(user, x, y, cb) {
     console.log('move');
 
-     var data = {
-         app: Game.PARENT_PERMLINK,
-         type: "MOVE",
-         user: user.login,
-         x: 1,
-         y: 1
-     };
+    var data = {
+        app: Game.PARENT_PERMLINK,
+        type: "MOVE",
+        user: user.login,
+        x: x,
+        y: y
+    };
+
+    var self = this;
 
     comment(user, game.author, game.id, 'move', data, function(err, result, id) {
         console.log('MOVE', err, result);
+
+        self.moves.push({
+            user: user.login,
+            x:  x,
+            y:  y
+        });
+
+        self.myMove = false;
+
         cb(err, result);
     });
 };
@@ -289,6 +304,8 @@ Game.getGame = function(author, permLink, cb ) {
                             x:  message.x,
                             y:  message.y
                          });
+
+                         game.myMove = commentAuthor != author;
                      } else if ('DONE' == message.type) {
                         game.state = Game.STATUS_DONE;
                      }
