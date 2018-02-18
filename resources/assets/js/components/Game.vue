@@ -50,8 +50,6 @@
     var GAME_DRAW = 3;
 
     export default {
-        props: ['game'],
-
         data: () => {
             return {
                 time: 20,
@@ -104,102 +102,21 @@
 //                }
             },
 
-            checkDiagonal(symb) {
-                let toright, toleft, res = false;
-                let inProgress= false, isInProgressRight = false, isInProgressLeft = false;
-                let winClass = '';
-                toright = true;
-                toleft = true;
-                for (let i=0; i < count; i++) {
-                    toright &= (this.$store.state.game.map[i][i] == symb);
-                    toleft &= (this.$store.state.game.map[count - i - 1][i] == symb);
-
-                    isInProgressRight = (this.$store.state.game.map[i][i] == 0);
-                    isInProgressLeft = (this.$store.state.game.map[count - i - 1][i] == 0);
-                }
-
-                if (toright) winClass = 'win-00-22';
-                if (toleft) winClass = 'win-20-02';
-                if (toright || toleft) res = true;
-
-                //если нет выйграша то проверка на незаконченную игру
-                if(!res) {
-                    if (isInProgressRight || isInProgressLeft) inProgress = true;
-                }
-
-                if(res === true) {
-                    return [GAME_WIN, winClass];
-                } else {
-                    return [GAME_IN_PROGRESS, winClass];
-                }
-            },
-
-            checkLines(symb) {
-                let cols = 0, rows = 0, res = false;
-                let inProgress= false, isInProgressRight = false, isInProgressLeft = false;
-                let winClass = '';
-                for (let col=0; col < count; col++) {
-                    cols = true;
-                    rows = true;
-                    for (let row=0; row < count; row++) {
-                        cols &= (this.$store.state.game.map[col][row] == symb);
-                        rows &= (this.$store.state.game.map[row][col] == symb);
-
-                        isInProgressRight = (this.$store.state.game.map[col][row] == 0);
-                        isInProgressLeft = (this.$store.state.game.map[row][col] == 0);
-                    }
-
-                    if (rows) winClass = 'win-'+col+'0-'+col+'2';
-                    if (cols) winClass = 'win-0'+col+'-2'+col;
-                    if (cols || rows) return [GAME_WIN, winClass];
-                }
-                //если нет выйграша то проверка на незаконченную игру
-                if(!res) {
-                    if (isInProgressRight || isInProgressLeft) inProgress = true;
-                }
-
-                return [GAME_IN_PROGRESS, winClass];
-            },
-
-            isGameEnded() {
-                for (let col=0; col < count; col++) {
-                    for (let row=0; row < count; row++) {
-                        if(this.$store.state.game.map[col][row] == 0) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            },
-
-            // symbol 0 is 1
-            // symbol X is 0
-            checkWin(sym) {
-                let resLines = this.checkLines(sym);
-                let resDiags = this.checkDiagonal(sym);
-
-                if(resLines[0] == GAME_WIN) {
-                    return resLines;
-                } else if(resDiags[0] == GAME_WIN) {
-                    return resDiags;
-                } else if(resLines[0] == GAME_IN_PROGRESS || resDiags[0] == GAME_IN_PROGRESS) {
-                    return [GAME_IN_PROGRESS, ''];
-                } else if (this.isGameEnded()) {
-                    return [GAME_DRAW, ''];
-                }
-                console.log(resLines);
-                console.log(resDiags);
-            },
-
             onInit() {
-                var timer = setInterval(() => {
-                    Vue.set(this.$store.state.game.map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), Math.floor(Math.random() * 3));
-                    let res = this.checkWin(1);
-                    this.$store.commit('winclass', res[1]);
-                    if(res == undefined) clearInterval(timer);
-                    if(res[0] == GAME_WIN) clearInterval(timer);
-                    console.log('Результат: ' + (res[0]));
-                }, 50);
+//                var timer = setInterval(() => {
+//                    var val = Math.floor(Math.random() * 3);
+//                    if(val == 1) {
+//                        this.$store.state.game.myMove = true;
+//                    } else {
+//                        this.$store.state.game.myMove = false;
+//                    }
+//
+//                    Vue.set(this.$store.state.game.map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), val);
+//                    this.$store.commit('winclass', res[1]);
+//                    if(res == undefined) clearInterval(timer);
+//                    if(res[0] == GAME_WIN) clearInterval(timer);
+//                    console.log('Результат: ' + (res[0]));
+//                }, 50);
 
             },
 
