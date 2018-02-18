@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    <div v-else class="fullheight">
+    <div v-if="$store.state.fail" class="fullheight">
         <div class="gradient">
             <div class="win-page">
                 <img src="images/no-win.png" alt="">

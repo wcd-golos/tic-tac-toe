@@ -1,9 +1,7 @@
 <template>
     <section class="game-proccess">
         <div class="header">
-            <h2>{{ $store.state.game.author }} VS {{ $store.state.game.opponent }}<br/>
-                {{ $store.state.game.permLink }}
-                {{$store.state.state}}</h2>
+            <h2>{{ $store.state.game.author }} VS {{ $store.state.game.opponent }}</h2>
         </div>
         <div class="proccess">
             <div class="sect">
