@@ -10,7 +10,8 @@ const store = new Vuex.Store({
         posting: '',
         active: '',
         state: 0,
-        win: true, // флаг выйгыша
+        win: false, // флаг выйгыша
+        fail: false,
         get_golos_terms: 'Победить в игре tic-tac-toe', // флаг выйгыша
         winclass: '',  //класс стиля для перечеркивания доски в случае победы
         game_golos_rate: "0.010 GOLOS", // количество переводимых голосов
@@ -36,6 +37,14 @@ const store = new Vuex.Store({
         },
         winclass(state, current) {
             state.winclass = current;
+        },
+        win(state, current) {
+            state.win = true;
+            state.fail = false;
+        },
+        fail(state, current) {
+            state.win = false;
+            state.fail = true;
         },
         game(state, game) {
             state.game = game;
