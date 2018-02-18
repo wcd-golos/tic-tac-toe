@@ -22,6 +22,7 @@
 
     export default {
         created: function() {
+            window.store = this.$store;
             let permStorage = localStorage['permissions'];
             if (permStorage != undefined) {
                 console.log(permStorage);

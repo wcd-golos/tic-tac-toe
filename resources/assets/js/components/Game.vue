@@ -1,8 +1,7 @@
 <template>
     <section class="game-proccess">
         <div class="header">
-            <h2>{{ $store.state.game.author }} VS {{ $store.state.game.opponent }}<br/>
-                {{ $store.state.game.permLink }}</h2>
+            <h2>{{ $store.state.game.author }} VS {{ $store.state.game.opponent }}</h2>
         </div>
         <div class="proccess">
             <div class="sect">
@@ -21,11 +20,11 @@
                     <h3 v-if="!$store.state.game.myMove">Ход оппонента</h3>
 
                     <div class="field">
-                        <div v-bind:class="$store.state.winclass" class="result-win"></div>
+                        <div v-bind:class="$store.state.game.className" class="result-win"></div>
                         <div class="rov" v-for="(row,i) in $store.state.game.map" :key="i">
                             <div class="col" v-for="(col, j) in $store.state.game.map[i]" :key="j">
-                                <div class="cell" v-if="$store.state.game.map[i][j] == 1" v-on:click="step(i, j)"><img src="images/circle.png" alt=""></div>
-                                <div class="cell" v-else-if="$store.state.game.map[i][j] == 2" v-on:click="step($store.state.game.map[i][j], i, j)"><img src="images/cross.png" alt=""></div>
+                                <div class="cell" v-if="$store.state.game.map[i][j] == 1" v-on:click="step(i, j)"><img src="images/cross.png" alt=""></div>
+                                <div class="cell" v-else-if="$store.state.game.map[i][j] == 2" v-on:click="step($store.state.game.map[i][j], i, j)"><img src="images/circle.png" alt=""></div>
                                 <div class="cell" v-else-if="$store.state.game.map[i][j] == 0" v-on:click="step($store.state.game.map[i][j], i, j)"><img src="images/empty.png" alt=""></div>
                             </div>
                         </div>
