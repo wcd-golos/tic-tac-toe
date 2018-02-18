@@ -87,7 +87,7 @@ function Game(permLink, author) {
     ];
 };
 
-Game.PARENT_PERMLINK = 'tic-tac-toe-games-28';
+Game.PARENT_PERMLINK = 'tic-tac-toe-games-31';
 
 Game.STATUS_NEW = 0;
 Game.STATUS_PLAYING = 1;
@@ -120,7 +120,7 @@ Game.prototype.move = function(user, x, y, cb) {
         return cb('Вы не можете сделать этот ход');
     }
 
-    this.map[x][y] = user.login == this.author ? 2 : 1;
+    this.map[x][y] = user.login == this.author ? 1 : 2;
 
     var data = {
         app: Game.PARENT_PERMLINK,
@@ -144,6 +144,7 @@ Game.prototype.move = function(user, x, y, cb) {
         self.myMove = false;
 
         var result = self.checkWin();
+        console.log('result-',result);
         if (result[0] == Game.RESULT_IN_PROGRESS) {
             console.log('in progress');
         } else {
