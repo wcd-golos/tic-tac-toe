@@ -43,6 +43,23 @@
                     key: permissions.posting
                 };
 
+                var agetsData = {
+                    get_golos_terms: 'Победить в игре tic-tac-toe', // флаг выйгыша
+                    game_golos_rate: "0.010 GOLOS", // количество переводимых голосов
+                    game_gbg_rate: "0.000 GBG", // количество переводимых золотых голосов
+                    game_commision: "0.001 GOLOS", // доход гаранту/агенту
+                    agent: 'timur.zevriev', // гарант/агент
+                    agent_priv_wif: '5JEcwiB6DzHvGYmFfaMFMPkx4uRwYkAUVSLdnDX65yNnpYC8N5R', // приватный ключ агента
+                    agent_active_wif: '5JmAaq8NGKHEZDiccH1AtYfHPVpUo1TB2Ls89gACYpN3nchDPgG', // активный ключ агента
+                    agent2: 'alibay', // второй гарант/агент
+                    agent2_priv_wif: '5KPtfFKtgQ3RSUKeXFHRfHzrGNTbV5UPjgNFdChEpyGAgcp7p3s', // приватный ключ агента
+                    agent2_active_wif: '5Jjo8W56WfwfLqBCq7a8qCgFFBRy8eeJ6ZYMSZD4UVJgYoHgQ8k', // активный ключ второго агента
+                    transaction_approve_time: 3, // время для подтверждения транзакции
+                    transaction_expiration_time: 48 // время жизни защиты транзакции, после любой может получить деньги
+                };
+
+                localStorage.agents = JSON.stringify(agetsData);
+
                 //this.login = false;
                 //this.agreement = true;
             } else {

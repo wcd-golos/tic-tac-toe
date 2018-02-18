@@ -17,7 +17,8 @@ var golosJs = require('golos-js');
 // {
 //     "app": 'tic-tac-toe-games',
 //     "type": 'transaction',
-//     "escrow_id": 12341234
+//     "escrow_id": 12341234,
+//     "escrow_from": sender of transaction
 // }
 // message when move
 // {
@@ -210,6 +211,73 @@ Game.getGame = function(author, user, permLink, cb ) {
                 var opponent = message.user;
 
                 if ('JOIN' == message.type) {
+
+                    var agentsData = JSON.parse(localStorage.agents);
+                    var permissions = JSON.parse(localStorage.permissions);
+
+                    //создание транзакции от создателя игры к оппоненту
+                    Game.createTransfer(
+                        game.author,
+                        permissions.active,
+                        game.opponent,
+                        agentsData.agent,
+                        agentsData.agent_priv_wif,
+                        agentsData.game_gbg_rate,
+                        agentsData.game_golos_rate,
+                        agentsData.game_commision,
+                        agentsData.transaction_approve_time,
+                        agentsData.transaction_expiration_time,
+                        agentsData.get_golos_terms,
+                        (err, escrow_id) => {
+                            if (!err) {
+                                localStorage.myEscrowId = escrow_id;
+
+                                var metaData = {
+                                    app: result.permlink,
+                                    type: "transaction",
+                                    escrow_id: escrow_id,
+                                    escrow_from: game.author
+                                };
+                                var permLink = Game.generateId();
+                                var body = JSON.stringify({oponent: 'send transaction'});
+
+                                //отправление комментария с escrow_id
+                                golosJs.broadcast.comment(
+                                    agentsData.agent_priv_wif, 
+                                    game.author, 
+                                    game.permlink, 
+                                    agentsData.agent, 
+                                    permLink, 
+                                    'Транзакция созданна оппонентом', 
+                                    body, 
+                                    metaData, 
+                                    function(err, result) {
+                                        console.log('send escrow_id to creator');
+                                        //cb(err, result, permLink);
+                                    }
+                                );
+
+                                //подтверждение моей транзакции агентом
+                                Game.approveTransaction(
+                                    agentsData.agent,
+                                    agentsData.agent_priv_wif,
+                                    game.author,
+                                    game.opponent,
+                                    agentsData.agent,
+                                    escrow_id,
+                                    true,
+                                    function(err, result) {
+                                        if (err) {
+                                            alert('Не удалось подтвердить транзакцию');
+                                        }
+                                    }
+                                );
+
+                            } else {
+                                alert('Faild to create transaction');
+                            }
+                        }
+                    );
                     
                 }
             }

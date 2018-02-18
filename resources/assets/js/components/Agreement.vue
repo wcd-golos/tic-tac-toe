@@ -87,7 +87,7 @@
                             var game_author = result.author;
                             var game_permlink = result.permlink;
 
-                            //создание транзакции
+                            //создание транзакции от оппонента к создателю игры
                             Game.createTransfer(
                                 this.$store.state.user,
                                 this.$store.state.active,
@@ -102,12 +102,13 @@
                                 this.$store.state.get_golos_terms,
                                 (err, escrow_id) => {
                                     if (!err) {
-                                        localStorage.escrowId = escrow_id;
+                                        localStorage.myEscrowId = escrow_id;
 
                                         var metaData = {
                                             app: Game.PARENT_PERMLINK,
                                             type: "transaction",
-                                            escrow_id: escrow_id
+                                            escrow_id: escrow_id,
+                                            escrow_from: this.$store.state.user
                                         };
                                         var permLink = Game.generateId();
                                         var body = JSON.stringify({oponent: 'send transaction'});
