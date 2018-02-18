@@ -87,8 +87,7 @@ function Game(permLink, author) {
     ];
 };
 
-Game.PARENT_PERMLINK = 'tic-tac-toe-games-16';
-
+Game.PARENT_PERMLINK = 'tic-tac-toe-games-26';
 
 Game.STATUS_NEW = 0;
 Game.STATUS_PLAYING = 1;
@@ -190,7 +189,7 @@ Game.getGame = function(author, user, permLink, cb ) {
   
         var game = new Game(result.permlink, result.author);
         game.isMy = result.author == user;
-
+        game.myMove = game.isMy;
 
         //console.log('game', game);
 
@@ -223,7 +222,7 @@ Game.getGame = function(author, user, permLink, cb ) {
 
                      if ('JOIN' == message.type) {
                          game.opponent = message.user;
-                         game.myMove = !game.isMy;
+
                      } else if ('MOVE' == message.type) {
                          game.moves.push({
                             user: commentAuthor,
@@ -231,8 +230,15 @@ Game.getGame = function(author, user, permLink, cb ) {
                             y:  message.y
                          });
 
-                         game.map[message.x][message.y] = game.author == author ? 2 : 1;
-                         game.myMove = commentAuthor != author;
+                         var sym = 1;
+                         if (game.author == user) {
+                             sym = game.isMy ? 1 : 2;
+                         } else {
+                             sym = game.isMy ? 2 : 1;
+                         }
+
+                         game.map[message.x][message.y] = sym;
+                         game.myMove = commentAuthor != user;
                      } else if ('DONE' == message.type) {
                         game.state = Game.STATUS_DONE;
                      }
