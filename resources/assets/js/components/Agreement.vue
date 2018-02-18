@@ -50,9 +50,12 @@
                 }
 
                 this.loader = true;
-                //console.log('store', this.$store.state.user);
-                //this.$store.commit('state', 2);
-                Game.play(this.$store.state.posting, this.$store.state.user, (err, result) => {
+                var user = {
+                    login:  this.$store.state.user,
+                    key: this.$store.state.posting
+                };
+
+                Game.play(user, (err, result) => {
                     if (!err) {
                         console.log('new game', result);
                         if (result.state === 0) {

@@ -39,7 +39,7 @@ function guid() {
         s4() + '-' + s4() + s4() + s4();
 }
 
-function comment(username, parentAuthor, wif, parentPermlink, title, info, cb) {
+function comment(user, parentAuthor, parentPermlink, title, info, cb) {
 
     golosJs.api.login('', '', function(err, result) {
         if (err || !result) {
@@ -53,8 +53,7 @@ function comment(username, parentAuthor, wif, parentPermlink, title, info, cb) {
             info: info
         };
 
-        //wif, parentAuthor, parentPermlink, author, permlink, title, body, jsonMetadata, function(err, result)
-        golosJs.broadcast.comment(wif, parentAuthor, parentPermlink, username, permLink, title, body, jsonMetadata, function(err, result) {
+        golosJs.broadcast.comment(user.key, parentAuthor, parentPermlink, user.login, permLink, title, body, jsonMetadata, function(err, result) {
             cb(err, result, permLink);
         });
     });
@@ -221,7 +220,15 @@ Game.prototype.persist = function () {
 Game.prototype.move = function(user, x, y, cb) {
     console.log('move');
 
-    comment(user, game.author, game.id, JSON.stringify({x: x, y: y}), ['MOVE'], function(err, result, id) {
+     var data = {
+         app: Game.PARENT_PERMLINK,
+         type: "MOVE",
+         user: user.login,
+         x: 1,
+         y: 1
+     };
+
+    comment(user, game.author, game.id, 'move', data, function(err, result, id) {
         console.log('MOVE', err, result);
         cb(err, result);
     });
@@ -289,17 +296,17 @@ Game.getGame = function(author, permLink, cb ) {
     });
 };
 
-Game.createGame = function (wif, username, cb) {
+Game.createGame = function (user, cb) {
 
     var title = `Игра создана ${ username }`;
 
-    jsonMetadata = {
+    var data = {
         app: Game.PARENT_PERMLINK,
         type: 'created',
-        creater: username
+        creator: username
     };
 
-    comment(username, '', wif, Game.PARENT_PERMLINK, title, jsonMetadata, function(err, result, permLink) {
+    comment(user, '', Game.PARENT_PERMLINK, title, data, function(err, result, permLink) {
         if (err) {
             return cb(err);
         }
@@ -350,7 +357,7 @@ Game.getLastGame = function (cb) {
     });
 };
 
-Game.play = function(wif, username, cb) {
+Game.play = function(user, cb) {
     Game.getLastGame((err, game) => {
 
         if (err) {
@@ -358,7 +365,7 @@ Game.play = function(wif, username, cb) {
         }
 
         if (game == null) {
-            Game.createGame(wif, username, cb);
+            Game.createGame(user, cb);
             return;
         }
 
@@ -368,7 +375,7 @@ Game.play = function(wif, username, cb) {
             }
 
             if (game.state != Game.STATUS_NEW) {
-                return Game.createGame(wif, username, cb);
+                return Game.createGame(user, cb);
             }
 
             game.join(wif, username, function(err, result) {
@@ -379,15 +386,15 @@ Game.play = function(wif, username, cb) {
     });
 };
 
-Game.prototype.join = function(wif, username, cb) {
-    //console.log('join');['OPPONENT']
+Game.prototype.join = function(user, cb) {
+
     var jsonMetadata = {
         "app": Game.PARENT_PERMLINK,
         "type": "start",
         "userJoined": username
     };
 
-    comment(username, this.author, wif, this.permLink, '', jsonMetadata, function(err, result, permLink) {
+    comment(user, this.author, this.permLink, '', jsonMetadata, function(err, result, permLink) {
         //console.log('CREATE post/comment', err, result);
         cb(err, result);
     });
