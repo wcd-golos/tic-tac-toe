@@ -202,6 +202,18 @@ Game.getGame = function(author, user, permLink, cb ) {
 
             game.state = comments.length > 0 ? Game.STATUS_PLAYING : Game.STATUS_NEW;
 
+            // если подсоеденился второй игрок
+            if (game.isMy && comments.length == 1 && comments[0].author == result.author) {
+
+                var meta = JSON.parse(comments[0].json_metadata);
+                var message = meta.info || {};
+                var opponent = message.user;
+
+                if ('JOIN' == message.type) {
+                    
+                }
+            }
+
             comments.forEach(comment => {
                 try {
                     var meta = JSON.parse(comment.json_metadata);
