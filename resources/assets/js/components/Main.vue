@@ -88,7 +88,10 @@
                 }
 
                 Game.getGame(activeGame.author, activeGame.id, function (err, game) {
+//                    this.$store.commit('game', game);
+                    console.log('MAIN: ', err, game);
                     if (err || game == null) {
+                        console.log(err);
                         return cb(Game.STATUS_NEW);
                     }
 

@@ -84,6 +84,8 @@
                             console.log('joined to game');
                             this.$store.commit('state', 2);
                         }
+
+                        this.$store.commit('game', result);
                     } else {
                         console.log('err', err);
                         if (err.payload.id == 11) {

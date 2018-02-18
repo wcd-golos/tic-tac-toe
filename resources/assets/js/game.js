@@ -62,7 +62,7 @@ function comment(user, parentAuthor, parentPermlink, title, info, cb) {
 function Game(permLink, author) {
     this.permLink = permLink;
     this.author = author;
-    this.opponent = 'Petya';
+    this.opponent = '';
     this.isMy = true;
     this.myMove = true;
 
@@ -81,7 +81,7 @@ function Game(permLink, author) {
     ];
 };
 
-Game.PARENT_PERMLINK = 'tic-tac-toe-ga555697686544357';
+Game.PARENT_PERMLINK = 'tic-tac-toe-ga555697686544358';
 
 
 Game.STATUS_NEW = 0;
