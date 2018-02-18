@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
+        game: null,
         user: 'tet',
         posting: '',
         active: '',
@@ -30,6 +31,9 @@ const store = new Vuex.Store({
         },
         winclass(state, current) {
             state.winclass = current;
+        },
+        game(state, game) {
+            state.game = game;
         }
     }
 });
