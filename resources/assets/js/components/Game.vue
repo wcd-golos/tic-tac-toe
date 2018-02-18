@@ -1,7 +1,8 @@
 <template>
     <section class="game-proccess">
         <div class="header">
-            <h2>{{ $store.state.game.author }} VS {{ $store.state.game.opponent }}</h2>
+            <h2>{{ $store.state.game.author }} VS {{ $store.state.game.opponent }}<br/>
+                {{ $store.state.game.permLink }}</h2>
         </div>
         <div class="proccess">
             <div class="sect">
@@ -76,6 +77,7 @@
             },
 
             step(valueInCell, i, j) {
+                console.log(this.$store.state.game.myMove);
                 if(!this.$store.state.game.myMove) {
                     console.log('Ход оппонента');
                     return;
