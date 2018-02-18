@@ -273,18 +273,24 @@ Game.getGame = function(author, permLink, cb ) {
                 return cb(err);
             }
 
+            game.state = comments.length > 0 ? Game.STATUS_PLAYING : Game.STATUS_NEW;
+
             comments.forEach(comment => {
                 try {
                     var meta = JSON.parse(comment.jsonMetadata);
                     var message = meta.info || {};
-                    var author = comment.author;
+                    var commentAuthor = comment.author;
 
                      if ('JOIN' == message.type) {
-                         game.opponent = body;
-                     } else if (meta.indexOf('MOVE')) {
-
-                     } else if (meta.indexOf('WIN')) {
-
+                         game.opponent = message.user;
+                     } else if ('MOVE' == message.type) {
+                         game.moves.push({
+                            user: commentAuthor,
+                            x:  message.x,
+                            y:  message.y
+                         });
+                     } else if ('DONE' == message.type) {
+                        game.state = Game.STATUS_DONE;
                      }
                 } catch (e) {
 
