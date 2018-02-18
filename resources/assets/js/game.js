@@ -87,7 +87,7 @@ function Game(permLink, author) {
     ];
 };
 
-Game.PARENT_PERMLINK = 'tic-tac-toe-games-27';
+Game.PARENT_PERMLINK = 'tic-tac-toe-games-33';
 
 Game.STATUS_NEW = 0;
 Game.STATUS_PLAYING = 1;
@@ -120,7 +120,7 @@ Game.prototype.move = function(user, x, y, cb) {
         return cb('Вы не можете сделать этот ход');
     }
 
-    this.map[x][y] = user.login == this.author ? 2 : 1;
+    this.map[x][y] = user.login == this.author ?  1 : 2;
 
     var data = {
         app: Game.PARENT_PERMLINK,
@@ -130,8 +130,10 @@ Game.prototype.move = function(user, x, y, cb) {
         y: y
     };
 
-    var self = this;
+    var game = this;
 
+    var self = this;
+    var sumb = user.login == this.author ? 1 : 2;
     comment(user, this.author, this.permLink, 'move', data, function(err, result, id) {
         console.log('MOVE', err, result);
 
@@ -143,10 +145,13 @@ Game.prototype.move = function(user, x, y, cb) {
 
         self.myMove = false;
 
-        var result = self.checkWin();
+        var result = self.checkWin(sumb);
+        console.log('result-',result);
         if (result[0] == Game.RESULT_IN_PROGRESS) {
             console.log('in progress');
         } else {
+            this.className = result[1];
+
             var data = {
                 app: Game.PARENT_PERMLINK,
                 type: "DONE",
@@ -156,7 +161,7 @@ Game.prototype.move = function(user, x, y, cb) {
 
             self.state = Game.STATUS_DONE;
 
-            comment(user, game.author, game.id, 'move', data, function(err, result, id) {});
+            comment(user, game.author, game.id, 'done', data, function(err, result, id) {});
         }
 
         cb(err, result);
@@ -231,7 +236,7 @@ Game.getGame = function(author, user, permLink, cb ) {
                          });
 
                          var sym = 1;
-                         if (game.author == user) {
+                         if (commentAuthor == user) {
                              sym = game.isMy ? 1 : 2;
                          } else {
                              sym = game.isMy ? 2 : 1;
@@ -277,7 +282,7 @@ Game.sync = function (game, user, cb) {
                     });
 
                     var sym = 1;
-                    if (game.author == user) {
+                    if (commentAuthor == user) {
                         sym = game.isMy ? 1 : 2;
                     } else {
                         sym = game.isMy ? 2 : 1;
@@ -640,6 +645,8 @@ Game.prototype.isGameEnded = function() {
 Game.prototype.checkWin = function(sym) {
     var resLines = this.checkLines(sym);
     var resDiags = this.checkDiagonal(sym);
+    console.log('lines',resLines);
+    console.log('diags',resDiags);
 
     if(resLines[0] == Game.RESULT_WIN) {
         return resLines;
@@ -650,8 +657,7 @@ Game.prototype.checkWin = function(sym) {
     } else if (this.isGameEnded()) {
         return [Game.RESULT_DRAW, ''];
     }
-    console.log(resLines);
-    console.log(resDiags);
+
 };
 
 window.Game = Game;
