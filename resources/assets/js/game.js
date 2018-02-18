@@ -276,7 +276,7 @@ Game.getGame = function(author, permLink, cb ) {
             comments.forEach(comment => {
                 try {
                     var meta = JSON.parse(comment.jsonMetadata);
-                    var message: meta.info || {};
+                    var message = meta.info || {};
                     var author = comment.author;
 
                      if ('JOIN' == message.type) {
