@@ -4,10 +4,14 @@
             <login v-on:success="logged"></login>
         </div>
         <div v-if="$store.state.state == 1" class="fullheight">
-            <agreement v-on:agree="agree"></agreement>
+            <game v-bind:game="gameWrapper"></game>
+            <!--<agreement v-on:agree="agree"></agreement>-->
         </div>
         <div v-if="$store.state.state == 2" class="fullheight">
             <game v-bind:game="gameWrapper"></game>
+        </div>
+        <div v-if="$store.state.state == 3" class="fullheight">
+            <result></result>
         </div>
     </div>
 </template>
@@ -40,9 +44,11 @@
                 let permissions = JSON.parse(permStorage);
                 //this.login = false;
                 //this.agreement = true;
-                //this.$store.commit('state', 1);
+                this.$store.commit('state', 1);
                 this.$store.commit('permissions', permissions);
-                //console.log('user', this.$store.state.user)            
+                //console.log('user', this.$store.state.user)
+                this.$store.commit('state', 1);
+                //console.log('user', this.$store.state.user)
                 // Game.play(permissions.posting, permissions.user, function(err, game) {
                 //     if (err) {
                 //         console.log(err);
@@ -55,6 +61,8 @@
 
                 //this.login = false;
                 //this.agreement = true;
+            } else {
+
             }
 
             getCurrentState((state, game) => {

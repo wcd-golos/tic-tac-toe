@@ -15,7 +15,7 @@
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div id="app">
+    <div id="app" class="fullheight">
         <div class="wrapper">
             <mainmain></mainmain>
             {{--@yield('content')--}}
