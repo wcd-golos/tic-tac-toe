@@ -19,11 +19,12 @@
                     <h3 v-if="!myStep">Ход оппонента</h3>
 
                     <div class="field">
-                        <div class="str" v-for="(row,i) in map" :key="i">
+                        <div v-bind:class="$store.state.winclass" class="result-win"></div>
+                        <div class="rov" v-for="(row,i) in map" :key="i">
                             <div class="col" v-for="(col, j) in map[i]" :key="j">
-                                <div v-if="map[i][j] == 1" v-on:click="step(i, j)">O</div>
-                                <div v-else-if="map[i][j] == 2" v-on:click="step(map[i][j], i, j)">X</div>
-                                <div v-else-if="map[i][j] == 0" v-on:click="step(map[i][j], i, j)">&nbsp;</div>
+                                <div class="cell" v-if="map[i][j] == 1" v-on:click="step(i, j)"><img src="images/circle.png" alt=""></div>
+                                <div class="cell" v-else-if="map[i][j] == 2" v-on:click="step(map[i][j], i, j)"><img src="images/cross.png" alt=""></div>
+                                <div class="cell" v-else-if="map[i][j] == 0" v-on:click="step(map[i][j], i, j)"><img src="images/empty.png" alt=""></div>
                             </div>
                         </div>
                     </div>
@@ -183,8 +184,8 @@
                 isInProgressLeft = (map[row][col] == 0);
             }
 
-            if (cols) winClass = 'win-'+col+'0-'+col+'2';
-            if (rows) winClass = 'win-0'+col+'-2'+col;
+            if (rows) winClass = 'win-'+col+'0-'+col+'2';
+            if (cols) winClass = 'win-0'+col+'-2'+col;
             if (cols || rows) return [GAME_WIN, winClass];
         }
         //если нет выйграша то проверка на незаконченную игру
@@ -235,7 +236,7 @@
                 myName: '',
                 hisName: 'Петя',
                 myStep: true,
-                time: 20
+                time: 20,
             }
         },
         created: function() {
@@ -264,7 +265,8 @@
                     Vue.set(map[i], j, 1);
                     let res = checkWin(1);
                     if(res[0] == GAME_WIN) {
-//                        console.log(res[1]);
+                        console.log(res);
+                        this.$store.commit('winclass', res[1]);
                         alert('!!!Вы выйграли!!!');
                     } else if(res[0] == GAME_DRAW) {
                         alert('Ничья!');
@@ -272,14 +274,14 @@
                 }
             },
             onInit() {
-                var timer = setInterval(function() {
+                var timer = setInterval(() => {
                     Vue.set(map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), Math.floor(Math.random() * 3));
                     let res = checkWin(1);
-                    console.log(res);
+                    this.$store.commit('winclass', res[1]);
                     if(res == undefined) clearInterval(timer);
                     if(res[0] == GAME_WIN) clearInterval(timer);
                     console.log('Результат: ' + (res[0]));
-                }, 100);
+                }, 50);
 
             }
         }
