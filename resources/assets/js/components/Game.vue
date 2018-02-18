@@ -53,6 +53,7 @@
             this.onInit();
             this.waitForStep();
             console.log('this.game', this.$store.state.game);
+            this.getComments(this.$store.state.game.permLink);
         },
         methods: {
             verifyUser () {
@@ -125,8 +126,10 @@
                         }));
 
                         } else if (data.id === 2) {
-                            let result = this.blockFilter(data.result, permLink);
-                            if (start) {
+                            console.log('data.result', data.result);
+                            console.log('permLink', permLink);
+                            let result = Game.blockFilter(data.result, permLink);
+                            if (result) {
                                 console.log('result', data.result);
                             }
                         }
