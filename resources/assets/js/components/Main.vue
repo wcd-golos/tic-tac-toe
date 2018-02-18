@@ -4,11 +4,10 @@
             <login v-on:success="logged"></login>
         </div>
         <div v-if="$store.state.state == 1" class="fullheight">
-            <!--<game v-bind:game="gameWrapper"></game>-->
             <agreement v-on:agree="agree"></agreement>
         </div>
         <div v-if="$store.state.state == 2" class="fullheight">
-            <game v-bind:game="gameWrapper"></game>
+            <game></game>
         </div>
         <div v-if="$store.state.state == 3" class="fullheight">
             <result></result>
@@ -17,7 +16,6 @@
 </template>
 
 <script>
-
     var STATUS_NEW = 0;
     var STATUS_PLAYING = 1;
     var STATUS_DONE = 2;
@@ -54,9 +52,8 @@
                 //this.agreement = state != STATUS_PLAYING;
                 //this.game = state == STATUS_PLAYING;
                 this.$store.commit('state', 2);
+                console.log(game);
                 this.$store.commit('game', game);
-//                this.$store.commit('state', 2);
-                this.gameWrapper = game;
             });
         },
 
@@ -77,7 +74,6 @@
 
                     game.persist();
                     this.$store.commit('state', 2);
-                    this.gameWrapper = game;
                 });
             },
             logged: function(id) {
