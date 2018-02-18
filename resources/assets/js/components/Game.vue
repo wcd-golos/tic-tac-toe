@@ -53,12 +53,16 @@
             this.onInit();
             this.waitForStep();
             console.log('this.game', this.$store.state.game);
+<<<<<<< HEAD
 
             setInterval(() => {
                 Game.sync(this.$store.state.game, JSON.parse(localStorage.permissions).user, function () {
                     console.log('sync');
                 });
             }, 1000);
+=======
+            this.getComments(this.$store.state.game.permLink);
+>>>>>>> b90d0be3ff96e81d2df213f5dabcf7d05ccd5528
         },
         methods: {
             verifyUser () {
@@ -131,8 +135,10 @@
                         }));
 
                         } else if (data.id === 2) {
-                            let result = this.blockFilter(data.result, permLink);
-                            if (start) {
+                            console.log('data.result', data.result);
+                            console.log('permLink', permLink);
+                            let result = Game.blockFilter(data.result, permLink);
+                            if (result) {
                                 console.log('result', data.result);
                             }
                         }
