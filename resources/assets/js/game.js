@@ -81,7 +81,7 @@ function Game(permLink, author) {
     ];
 };
 
-Game.PARENT_PERMLINK = 'tic-tac-toe-ga555697686544355';
+Game.PARENT_PERMLINK = 'tic-tac-toe-ga555697686544357';
 
 
 Game.STATUS_NEW = 0;
@@ -267,6 +267,18 @@ Game.getLastGame = function (cb) {
         if (!result.length) {
             return cb(null, null);
         }
+
+        var game = result[0];
+
+        Game.getGame(game.author, game.permlink, cb);
+
+        /*if (err) {
+            return cb(err);
+        }
+
+        if (!result.length) {
+            return cb(null, null);
+        }
         result = result[0];
         console.log('result', result)
         //проверяем наличие комментариев
@@ -285,8 +297,10 @@ Game.getLastGame = function (cb) {
 
                     });
                 }
-            } else { cb(err) }
-        });
+            } else {
+                cb(err);
+            }
+        });*/
     });
 };
 
