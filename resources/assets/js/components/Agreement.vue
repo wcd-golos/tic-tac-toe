@@ -36,8 +36,10 @@
         golosJs.api.getAccounts([username], function(err, response){
             if (!err) {
                 $.each(response, function(index, val) {
-                    var golos_count = parseFloat(val.balance.slice(0, -5)).toFixed(3);
-                    if (golos_count < game_golos_rate) {
+                    var user_golos_count = parseFloat(val.balance.slice(0, -5)).toFixed(3);
+                    game_golos_rate = parseFloat(game_golos_rate.slice(0, -5)).toFixed(3);
+
+                    if (user_golos_count < game_golos_rate) {
                         return false;
                         alert('У вас не достаточно средств на счету для начала игры');
                     }
@@ -81,6 +83,54 @@
                             this.startReady(result.permLink);
                         } else if (result.state === 1) {
                             //присоединение к игре
+
+                            var game_author = result.author;
+
+                            //создание транзакции
+                            Game.createTransfer(
+                                this.$store.state.user,
+                                this.$store.state.active,
+                                game_author,
+                                this.$store.state.agent2,
+                                this.$store.state.agent2_priv_wif,
+                                this.$store.state.gbg_amount,
+                                this.$store.state.game_golos_rate,
+                                this.$store.state.game_commision,
+                                this.$store.state.transaction_approve_time,
+                                this.$store.state.transaction_expiration_time,
+                                this.$store.state.get_golos_terms,
+                                function (err, escrow_id) {
+                                    if (!err) {
+                                        localStorage.escrowId = escrow_id;
+
+                                        //отправление комментария с escrow_id
+                                        
+
+
+                                        //подтверждение моей транзакции агентом
+                                        Game.approveTransaction(
+                                            this.$store.state.agent2,
+                                            this.$store.state.agent2_active_wif,
+                                            this.$store.state.user,
+                                            game_author,
+                                            this.$store.state.agent2,
+                                            escrow_id,
+                                            true,
+                                            function(err, result) {
+                                                if (err) {
+                                                    alert('Не удалось подтвердить транзакцию');
+                                                }
+                                            }
+                                        );
+
+                                    } else {
+                                        alert('Faild to create transaction');
+                                    }
+                                }
+                            );
+
+                            // отправление сообщения о транзакции
+
                             console.log('joined to game');
                         }
                     } else {

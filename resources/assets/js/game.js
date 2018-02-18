@@ -361,7 +361,7 @@ Game.blockFilter = function (block, permLink) {
 
 
 // создать транзакцию
-Game.createTransfer = function(from, active_wif, to, agent, agent_active_wif, gbg_amount, golos_amount, fee, sendDeadline, sendEscrowExpiration, terms) {
+Game.createTransfer = function(from, active_wif, to, agent, agent_priv_wif, gbg_amount, golos_amount, fee, sendDeadline, sendEscrowExpiration, terms, cb) {
     console.log('create transfer');
 
     //генерация id транзакции
@@ -398,15 +398,10 @@ Game.createTransfer = function(from, active_wif, to, agent, agent_active_wif, gb
             function(err, response) {
                 if(!err && response.ref_block_num) {
                     console.log('create transaction: ', response);
-                    localStorage.escrowId = escrow_id;
-
-                    // approve by agent
-                    Game.approveTransaction(agent, agent_active_wif, from, to, agent, escrow_id, true);
-                    
-                    //TODO: сохранить имя отправителя, получателя и код транзакции escrow_id
                 } else {
                     console.log('create transaction error: ', err);
                 }
+                cb(err, escrow_id);
             }
         );
     });
@@ -430,7 +425,7 @@ Game.loadTransaction = function(from, escrow_id) {
 
 
 // подтверждение перевода агентом и получателем
-Game.approveTransaction = function(login, wif, from, to, agent, escrow_id, approve) {
+Game.approveTransaction = function(login, wif, from, to, agent, escrow_id, approve, cb) {
     golosJs.broadcast.escrowApprove(
         wif, // активный ключ подтверждающего
         from, // от кого перевод
@@ -441,9 +436,7 @@ Game.approveTransaction = function(login, wif, from, to, agent, escrow_id, appro
         approve, // true or false
         function(err, response) {
             console.log('approveTransaction: ', response, err);
-            if (err) {
-                alert('Не удалось подтвердить транзакцию');
-            }
+            cb(err, response);
         }
     );
 };
