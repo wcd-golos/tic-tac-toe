@@ -32,7 +32,7 @@ const store = new Vuex.Store({
         winclass(state, current) {
             state.winclass = current;
         },
-        geme(state, game) {
+        game(state, game) {
             state.game = game;
         }
     }
