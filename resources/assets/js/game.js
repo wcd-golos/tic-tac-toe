@@ -81,7 +81,7 @@ function Game(permLink, author) {
     ];
 };
 
-Game.PARENT_PERMLINK = 'tic-tac-toe-games-3';
+Game.PARENT_PERMLINK = 'tic-tac-toe-games-5';
 
 
 Game.STATUS_NEW = 0;
@@ -363,7 +363,7 @@ Game.play = function(user, cb) {
                 return Game.createGame(user, cb);
             }
 
-            game.join(user, function(err, result) {
+            game.join(user, (err, result) => {
                 game.state = 1;
                 cb(err, game);
             });
