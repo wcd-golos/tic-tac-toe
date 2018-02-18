@@ -77,6 +77,7 @@
             },
 
             step(valueInCell, i, j) {
+                console.log(this.$store.state.game.myMove);
                 if(!this.$store.state.game.myMove) {
                     console.log('Ход оппонента');
                     return;
