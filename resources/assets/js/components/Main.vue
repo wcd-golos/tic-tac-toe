@@ -66,17 +66,15 @@
 
         data: function () {
             return {
-                //login: true,
-                //agreement: false,
-                //game: false,
+                game: false,
                 user: null
             }
         },
 
         methods: {
-            verifyUser () {
-                verifyUser(this.username, this.wif);
-            },
+//            verifyUser () {
+//                verifyUser(this.username, this.wif);
+//            },
 
             agree: function(id) {
                 Game.play(this.user, (err, game) => {
@@ -85,10 +83,8 @@
                         return;
                     }
 
-                //     this.login = false;
-                //     this.agreement = false;
-                //     this.game = true;
-                //     this.gameWrapper = game;
+                    this.$store.commit('state', 2);
+                    this.gameWrapper = game;
                 });
             },
             logged: function(id) {
