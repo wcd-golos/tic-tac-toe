@@ -94,7 +94,7 @@
                                 game_author,
                                 this.$store.state.agent2,
                                 this.$store.state.agent2_priv_wif,
-                                this.$store.state.gbg_amount,
+                                this.$store.state.game_gbg_rate,
                                 this.$store.state.game_golos_rate,
                                 this.$store.state.game_commision,
                                 this.$store.state.transaction_approve_time,
