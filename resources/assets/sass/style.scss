@@ -13,7 +13,9 @@ body {
     font-weight: 400;
     background-color: #FCFFF5;
 }
-
+.fullheight {
+    height: 100vh;
+}
 .wrapper {
     width: 100%;
     margin: 0 auto;
@@ -253,11 +255,24 @@ body {
         width: 404px;
         height: 426px;
         background: url(../images/field-grid.png) center center no-repeat;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: center;
         position: relative;
+
+        .result-win {
+            position: absolute;
+            width: 100%;
+            top: 0;
+            bottom: 0;
+            left: 0;
+        }
+        
+        .rov {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            height: 140px;
+        }
         
         .cell {
             height: 80px;
@@ -273,55 +288,63 @@ body {
     
 }
 
-.win-0-2-vertical {
+.win-00-02 {
     &:after {
         content: "";
         position: absolute;
         width: 100%;
         top: 0;
         bottom: 0;
+        left: 0;
         background-image: url(../images/vertical.png);
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 15% 0;
         opacity: 0.7;
+        border: 1px solid #000;
+        z-index: 1;
     }
 }
-.win-1-2-vertical {
+.win-10-12 {
     &:after {
         content: "";
         position: absolute;
         width: 100%;
         top: 0;
         bottom: 0;
+        left: 0;
         background-image: url(../images/vertical.png);
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 50% 0;
         opacity: 0.7;
+        z-index: 1;
     }
 }
-.win-2-2-vertical {
+.win-20-22 {
     &:after {
         content: "";
         position: absolute;
         width: 100%;
         top: 0;
         bottom: 0;
+        left: 0;
         background-image: url(../images/vertical.png);
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 85% 0;
         opacity: 0.7;
+        z-index: 1;
     }
 }
-.win-0-2-horizont {
+.win-00-20 {
     &:after {
         content: "";
         position: absolute;
         width: 100%;
         top: 0;
         bottom: 0;
+        left: 0;
         background-image: url(../images/horizont.png);
         background-repeat: no-repeat;
         background-size: contain;
@@ -329,60 +352,68 @@ body {
         opacity: 0.7;
     }
 }
-.win-1-2-horizont {
+.win-01-21 {
     &:after {
         content: "";
         position: absolute;
         width: 100%;
         top: 0;
         bottom: 0;
+        left: 0;
         background-image: url(../images/horizont.png);
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 0 50%;
         opacity: 0.7;
+        z-index: 1;
     }
 }
-.win-2-2-horizont {
+.win-02-22 {
     &:after {
         content: "";
         position: absolute;
         width: 100%;
         top: 0;
         bottom: 0;
+        left: 0;
         background-image: url(../images/horizont.png);
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 0 85%;
         opacity: 0.7;
+        z-index: 1;
     }
 }
-.win-0-2-left {
+.win-00-22 {
     &:after {
         content: "";
         position: absolute;
         width: 100%;
         top: 0;
         bottom: 0;
+        left: 0;
         background-image: url(../images/left.png);
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 0 85%;
         opacity: 0.7;
+        z-index: 1;
     }
 }
-.win-2-2-right {
+.win-20-02 {
     &:after {
         content: "";
         position: absolute;
         width: 100%;
         top: 0;
         bottom: 0;
+        left: 0;
         background-image: url(../images/right.png);
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 0 85%;
         opacity: 0.7;
+        z-index: 1;
     }
 }
 
