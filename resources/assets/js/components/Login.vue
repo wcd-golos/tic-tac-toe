@@ -12,11 +12,8 @@
 </template>
 <script>
     var golos = require('golos-js');
-    //import Store from './../store';
 
     var verifyUser = (username, password, contex) => {
-
-        //проверяем наличие аккаунта
         golos.api.getAccounts([username], (err, result) => {
             let postingPubkey = result[0].posting.key_auths[0][0];
             if (result.length) {

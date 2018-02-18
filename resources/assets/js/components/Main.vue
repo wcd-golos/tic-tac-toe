@@ -40,9 +40,9 @@
                 let permissions = JSON.parse(permStorage);
                 //this.login = false;
                 //this.agreement = true;
-                //this.$store.commit('state', 1);
+                this.$store.commit('state', 1);
                 this.$store.commit('permissions', permissions);
-                //console.log('user', this.$store.state.user)            
+                //console.log('user', this.$store.state.user)        
                 // Game.play(permissions.posting, permissions.user, function(err, game) {
                 //     if (err) {
                 //         console.log(err);
