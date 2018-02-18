@@ -69,6 +69,8 @@ function Game(permLink, author) {
     this.moves = [];
     this.state = Game.STATUS_NEW;
 
+    this.className = '';
+
     //0 => null
     //1 => X
     //2 => O
