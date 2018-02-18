@@ -22,21 +22,6 @@
     var STATUS_PLAYING = 1;
     var STATUS_DONE = 2;
 
-    var getCurrentState = function (cb) {
-        var activeGame = Game.getCurrentGame();
-        if (!activeGame.id) {
-            return cb(STATUS_NEW);
-        }
-
-        Game.getGame(activeGame.author, activeGame.id, function (err, game) {
-            if (err || game == null) {
-                return cb(Game.STATUS_NEW);
-            }
-
-            return cb(game.state, game);
-        });
-    }
-
     export default {
         created: function() {
             let permStorage = localStorage['permissions'];
@@ -65,10 +50,11 @@
 
             }
 
-            getCurrentState((state, game) => {
+            this.getCurrentState((state, game) => {
                 //this.agreement = state != STATUS_PLAYING;
                 //this.game = state == STATUS_PLAYING;
                 this.$store.commit('state', 2);
+                this.$store.commit('game', game)
                 this.gameWrapper = game;
             });
         },
@@ -96,6 +82,20 @@
             logged: function(id) {
                 //this.login = false;
                 //this.agreement = true;
+            },
+            getCurrentState (cb) {
+                var activeGame = Game.getCurrentGame();
+                if (!activeGame.id) {
+                    return cb(STATUS_NEW);
+                }
+
+                Game.getGame(activeGame.author, activeGame.id, function (err, game) {
+                    if (err || game == null) {
+                        return cb(Game.STATUS_NEW);
+                    }
+
+                    return cb(game.state, game);
+                });
             }
         }
     };
