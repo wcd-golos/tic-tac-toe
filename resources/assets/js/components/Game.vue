@@ -1,30 +1,31 @@
 <template>
     <section class="game-proccess">
         <div class="header">
-            <h2>{{ myName }} VS {{ hisName }}</h2>
+            <h2>{{ $store.state.game.author }} VS {{ $store.state.game.opponent }}</h2>
         </div>
         <div class="proccess">
             <div class="sect">
                 <div class="member">
-                    <h3>{{ myName }}</h3>
-                    <img src="images/muted-left.png" alt="" class="ava-member">
+                    <h3>{{ $store.state.game.author }}</h3>
+                    <img src="images/active-left.png" v-if="$store.state.game.myMove" alt="" class="ava-member">
+                    <img src="images/muted-left.png" v-else alt="" class="ava-member">
                 </div>
             </div>
             <div class="sect">
                 <div class="field-container">
-                    <h3 v-if="myStep">
+                    <h3 v-if="$store.state.game.myMove">
                         <span v-if="time != 0">Ваш ход через {{ time }} сек.</span>
                         <span v-else>Ваш ход!</span>
                     </h3>
-                    <h3 v-if="!myStep">Ход оппонента</h3>
+                    <h3 v-if="!$store.state.game.myMove">Ход оппонента</h3>
 
                     <div class="field">
                         <div v-bind:class="$store.state.winclass" class="result-win"></div>
-                        <div class="rov" v-for="(row,i) in map" :key="i">
-                            <div class="col" v-for="(col, j) in map[i]" :key="j">
-                                <div class="cell" v-if="map[i][j] == 1" v-on:click="step(i, j)"><img src="images/circle.png" alt=""></div>
-                                <div class="cell" v-else-if="map[i][j] == 2" v-on:click="step(map[i][j], i, j)"><img src="images/cross.png" alt=""></div>
-                                <div class="cell" v-else-if="map[i][j] == 0" v-on:click="step(map[i][j], i, j)"><img src="images/empty.png" alt=""></div>
+                        <div class="rov" v-for="(row,i) in $store.state.game.map" :key="i">
+                            <div class="col" v-for="(col, j) in $store.state.game.map[i]" :key="j">
+                                <div class="cell" v-if="$store.state.game.map[i][j] == 1" v-on:click="step(i, j)"><img src="images/circle.png" alt=""></div>
+                                <div class="cell" v-else-if="$store.state.game.map[i][j] == 2" v-on:click="step($store.state.game.map[i][j], i, j)"><img src="images/cross.png" alt=""></div>
+                                <div class="cell" v-else-if="$store.state.game.map[i][j] == 0" v-on:click="step($store.state.game.map[i][j], i, j)"><img src="images/empty.png" alt=""></div>
                             </div>
                         </div>
                     </div>
@@ -32,8 +33,9 @@
             </div>
             <div class="sect">
                 <div class="member">
-                    <h3>{{ hisName }}</h3>
-                    <img src="images/active-right.png" alt="" class="ava-member">
+                    <h3>{{ $store.state.game.opponent }}</h3>
+                    <img src="images/active-right.png" v-if="!$store.state.game.myMove" alt="" class="ava-member">
+                    <img src="images/muted-right.png" v-else alt="" class="ava-member">
                 </div>
             </div>
         </div>
@@ -41,115 +43,7 @@
 </template>
 
 <script>
-    var count= 3;
-    var GAME_WIN = 1;
-    var GAME_FAIL = 0;
-    var GAME_IN_PROGRESS = 2;
-    var GAME_DRAW = 3;
-
-    //0 => null
-    //1 => X
-    //2 => O
-    var map = [];
-
-    //init map values
-    for(let i = 0; i < count; i++) {
-        Vue.set(map, i, []);
-        for(let j = 0; j < count; j++) {
-            Vue.set(map[i], j, 0);
-        }
-    }
-
-    let checkDiagonal = (symb) => {
-        let toright, toleft, res = false;
-        let inProgress= false, isInProgressRight = false, isInProgressLeft = false;
-        let winClass = '';
-        toright = true;
-        toleft = true;
-        for (let i=0; i < count; i++) {
-            toright &= (map[i][i] == symb);
-            toleft &= (map[count - i - 1][i] == symb);
-
-            isInProgressRight = (map[i][i] == 0);
-            isInProgressLeft = (map[count - i - 1][i] == 0);
-        }
-
-        if (toright) winClass = 'win-00-22';
-        if (toleft) winClass = 'win-20-02';
-        if (toright || toleft) res = true;
-
-        //если нет выйграша то проверка на незаконченную игру
-        if(!res) {
-            if (isInProgressRight || isInProgressLeft) inProgress = true;
-        }
-
-        if(res === true) {
-            return [GAME_WIN, winClass];
-        } else {
-            return [GAME_IN_PROGRESS, winClass];
-        }
-    };
-
-    let checkLines = (symb) => {
-        let cols = 0, rows = 0, res = false;
-        let inProgress= false, isInProgressRight = false, isInProgressLeft = false;
-        let winClass = '';
-        for (let col=0; col < count; col++) {
-            cols = true;
-            rows = true;
-            for (let row=0; row < count; row++) {
-                cols &= (map[col][row] == symb);
-                rows &= (map[row][col] == symb);
-
-                isInProgressRight = (map[col][row] == 0);
-                isInProgressLeft = (map[row][col] == 0);
-            }
-
-            if (rows) winClass = 'win-'+col+'0-'+col+'2';
-            if (cols) winClass = 'win-0'+col+'-2'+col;
-            if (cols || rows) return [GAME_WIN, winClass];
-        }
-        //если нет выйграша то проверка на незаконченную игру
-        if(!res) {
-            if (isInProgressRight || isInProgressLeft) inProgress = true;
-        }
-
-        return [GAME_IN_PROGRESS, winClass];
-    };
-
-    let isGameEnded = () => {
-        for (let col=0; col < count; col++) {
-            for (let row=0; row < count; row++) {
-                if(map[col][row] == 0) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    // symbol 0 is 1
-    // symbol X is 0
-    let checkWin = (sym) => {
-        let resLines = checkLines(sym);
-        let resDiags = checkDiagonal(sym);
-        
-        if(resLines[0] == GAME_WIN) {
-            return resLines;
-        } else if(resDiags[0] == GAME_WIN) {
-            return resDiags;
-        } else if(resLines[0] == GAME_IN_PROGRESS || resDiags[0] == GAME_IN_PROGRESS) {
-            return [GAME_IN_PROGRESS, ''];
-        } else if (isGameEnded()) {
-            return [GAME_DRAW, ''];
-        }
-        console.log(resLines);
-        console.log(resDiags);
-    };
-
     export default {
-        props: ['game'],
-
         data: () => {
             return {
                 map: map,
@@ -163,8 +57,6 @@
         },
         created: function() {
             this.onInit();
-            let permissions = JSON.parse(localStorage.permissions);
-            this.myName = permissions.user;
             this.waitForStep();
             console.log('this.game', this.$store.state.game);
         },
@@ -172,34 +64,43 @@
             verifyUser () {
                 verifyUser();
             },
+
             waitForStep() {
                 this.time = 20;
                 var timer = setInterval(() => {
                     this.time--;
-                    console.log(this.time);
                     if(this.time == 0) clearInterval(timer);
                 }, 1000);
             },
+
             step(valueInCell, i, j) {
-                if(valueInCell != 0) {
-                    alert('Вы не можете сделать ход в эту клетку');
+                if(!this.$store.state.game.myMove) {
+                    console.log('Ход оппонента');
                     return;
-                } else {
-                    Vue.set(map[i], j, 1);
-                    let res = checkWin(1);
-                    if(res[0] == GAME_WIN) {
-                        console.log(res);
-                        this.$store.commit('winclass', res[1]);
-                        alert('!!!Вы выйграли!!!');
-                    } else if(res[0] == GAME_DRAW) {
-                        alert('Ничья!');
-                    }
                 }
+                let permissions = JSON.parse(localStorage.permissions);
+                this.$store.state.game.move({
+                    login: permissions.user,
+                    key: permissions.posting
+                }, i, j, (err, res) => {
+                    console.log('MOVE: '+this.$store.state.game.myMove);
+                    if(err) {
+                        console.log(err);
+                        return;
+                    }
+                });
             },
+
             onInit() {
 //                var timer = setInterval(() => {
-//                    Vue.set(map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), Math.floor(Math.random() * 3));
-//                    let res = checkWin(1);
+//                    var val = Math.floor(Math.random() * 3);
+//                    if(val == 1) {
+//                        this.$store.state.game.myMove = true;
+//                    } else {
+//                        this.$store.state.game.myMove = false;
+//                    }
+//
+//                    Vue.set(this.$store.state.game.map[Math.floor(Math.random() * 3)], Math.floor(Math.random() * 3), val);
 //                    this.$store.commit('winclass', res[1]);
 //                    if(res == undefined) clearInterval(timer);
 //                    if(res[0] == GAME_WIN) clearInterval(timer);
@@ -207,6 +108,7 @@
 //                }, 50);
 
             },
+
             getComments(permLink) {
                 let websocket = new WebSocket("wss://ws.golos.io");
                 websocket.onopen = (event) => {
