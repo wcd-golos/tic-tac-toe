@@ -62,14 +62,17 @@ function comment(user, parentAuthor, parentPermlink, title, info, cb) {
 function Game(permLink, author) {
     this.permLink = permLink;
     this.author = author;
-    this.opponent = null;
+    this.opponent = 'Petya';
     this.isMy = true;
     this.myMove = true;
 
     this.moves = [];
     this.state = Game.STATUS_NEW;
 
-    this.matrix = [
+    //0 => null
+    //1 => X
+    //2 => O
+    this.map = [
         [0, 0, 0],
         [0, 0, 0],
         [0, 0, 0]
@@ -98,6 +101,13 @@ Game.prototype.checkEnd = function () {
 
 Game.prototype.move = function(user, x, y, cb) {
     console.log('move');
+
+    if (this.map[x][y]) {
+        // illegal move
+        return cb('Вы не можете сделать этот ход');
+    }
+
+    this.map[x][y] = user.login == this.author ? 2 : 1;
 
     var data = {
         app: Game.PARENT_PERMLINK,
@@ -180,6 +190,7 @@ Game.getGame = function(author, permLink, cb ) {
                             y:  message.y
                          });
 
+                         game.map[message.x][message.y] = game.author == author ? 2 : 1;
                          game.myMove = commentAuthor != author;
                      } else if ('DONE' == message.type) {
                         game.state = Game.STATUS_DONE;
@@ -459,5 +470,91 @@ Game.disputeTransaction = function (login, wif, from, to, agent, escrow_id) {
 };
 
 
+Game.prototype.checkDiagonal = function(symb) {
+    let toright, toleft, res = false;
+    let inProgress= false, isInProgressRight = false, isInProgressLeft = false;
+    let winClass = '';
+    toright = true;
+    toleft = true;
+    for (let i=0; i < count; i++) {
+        toright &= (this.map[i][i] == symb);
+        toleft &= (this.map[count - i - 1][i] == symb);
+
+        isInProgressRight = (this.map[i][i] == 0);
+        isInProgressLeft = (this.map[count - i - 1][i] == 0);
+    }
+
+    if (toright) winClass = 'win-00-22';
+    if (toleft) winClass = 'win-20-02';
+    if (toright || toleft) res = true;
+
+    //если нет выйграша то проверка на незаконченную игру
+    if(!res) {
+        if (isInProgressRight || isInProgressLeft) inProgress = true;
+    }
+
+    if(res === true) {
+        return [GAME_WIN, winClass];
+    } else {
+        return [GAME_IN_PROGRESS, winClass];
+    }
+};
+
+Game.prototype.checkLines = function(symb) {
+    let cols = 0, rows = 0, res = false;
+    let inProgress= false, isInProgressRight = false, isInProgressLeft = false;
+    let winClass = '';
+    for (let col=0; col < count; col++) {
+        cols = true;
+        rows = true;
+        for (let row=0; row < count; row++) {
+            cols &= (this.map[col][row] == symb);
+            rows &= (this.map[row][col] == symb);
+
+            isInProgressRight = (this.map[col][row] == 0);
+            isInProgressLeft = (this.map[row][col] == 0);
+        }
+
+        if (rows) winClass = 'win-'+col+'0-'+col+'2';
+        if (cols) winClass = 'win-0'+col+'-2'+col;
+        if (cols || rows) return [GAME_WIN, winClass];
+    }
+    //если нет выйграша то проверка на незаконченную игру
+    if(!res) {
+        if (isInProgressRight || isInProgressLeft) inProgress = true;
+    }
+
+    return [GAME_IN_PROGRESS, winClass];
+};
+
+Game.prototype.isGameEnded = function() {
+    for (let col=0; col < count; col++) {
+        for (let row=0; row < count; row++) {
+            if(this.map[col][row] == 0) {
+                return false;
+            }
+        }
+    }
+    return true;
+};
+
+// symbol 0 is 1
+// symbol X is 0
+Game.prototype.checkWin = function(sym) {
+    var resLines = this.checkLines(sym);
+    var resDiags = this.checkDiagonal(sym);
+
+    if(resLines[0] == GAME_WIN) {
+        return resLines;
+    } else if(resDiags[0] == GAME_WIN) {
+        return resDiags;
+    } else if(resLines[0] == GAME_IN_PROGRESS || resDiags[0] == GAME_IN_PROGRESS) {
+        return [GAME_IN_PROGRESS, ''];
+    } else if (this.isGameEnded()) {
+        return [GAME_DRAW, ''];
+    }
+    console.log(resLines);
+    console.log(resDiags);
+};
 
 window.Game = Game;
